@@ -1,0 +1,2993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>茉莉人设小助手 · CHARACTER BUILD PROTOCOL</title>
+<style>
+  :root{
+    --bg:#f7f7f8;
+    --panel:#ffffff;
+    --panel-2:#fbfbfc;
+    --ink:#0d0d0d;
+    --ink-2:#5a5a5a;
+    --ink-3:#9c9c9c;
+    --ink-4:#c9c9c9;
+    --line:#ececec;
+    --line-2:#dcdcdc;
+    --radius:12px;
+    --radius-sm:9px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Pretendard","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",
+                "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:14px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .topbar{
+    position:sticky;top:0;z-index:60;
+    background:rgba(247,247,248,.82);
+    backdrop-filter:saturate(180%) blur(16px);
+    -webkit-backdrop-filter:saturate(180%) blur(16px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:1160px;margin:0 auto;padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .mark{width:10px;height:10px;border-radius:50%;background:var(--ink);flex:0 0 auto;}
+  .brand h1{font-size:15px;font-weight:700;margin:0;letter-spacing:-.01em;}
+  .brand p{margin:0;font-size:9.5px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase;font-weight:600;}
+  .status{
+    display:flex;align-items:center;gap:8px;
+    font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;white-space:nowrap;
+  }
+  .status-dot{width:6px;height:6px;border-radius:50%;background:#d4d4d4;transition:background .2s;}
+  .status-dot.ok{background:var(--ink);}
+  .status-dot.loading{background:var(--ink);animation:pulse 1s infinite;}
+  .status-dot.err{background:var(--ink);box-shadow:0 0 0 3px #e2e2e2;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+  .wrap{max-width:1160px;margin:0 auto;padding:28px 28px 100px;}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px;
+    margin-bottom:16px;
+  }
+  .card-head{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-bottom:20px;flex-wrap:wrap;
+  }
+  .card-head h2{
+    font-size:11px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;margin:0;color:var(--ink);
+  }
+  .hint{font-size:11px;color:var(--ink-3);letter-spacing:.02em;}
+  .head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+  .tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--line);}
+  .tab{
+    background:transparent;border:none;cursor:pointer;
+    font:inherit;font-size:12.5px;font-weight:600;
+    color:var(--ink-3);
+    padding:10px 4px;margin-right:24px;
+    position:relative;
+    display:inline-flex;align-items:center;gap:7px;
+    transition:color .15s;
+  }
+  .tab:hover{color:var(--ink-2);}
+  .tab.active{color:var(--ink);}
+  .tab.active::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;
+    height:2px;background:var(--ink);border-radius:2px 2px 0 0;
+  }
+  .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:18px;height:18px;padding:0 6px;
+    background:var(--ink);color:#fff;
+    border-radius:9px;font-size:10px;font-weight:700;
+  }
+  .badge:empty{display:none;}
+
+  .row-3{display:grid;grid-template-columns:1.1fr 1.1fr 1.5fr;gap:14px;}
+  .row-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px;}
+  @media(max-width:900px){.row-3,.row-4{grid-template-columns:1fr;}}
+
+  .field{display:flex;flex-direction:column;gap:7px;min-width:0;}
+  .field > span{
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;
+  }
+  input,select,textarea{
+    width:100%;
+    background:#fff;
+    border:1px solid var(--line-2);
+    border-radius:var(--radius-sm);
+    padding:10px 13px;
+    font:inherit;font-size:13px;color:var(--ink);
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus,select:focus,textarea:focus{
+    border-color:var(--ink);
+    box-shadow:0 0 0 3px rgba(13,13,13,.05);
+  }
+  input::placeholder,textarea::placeholder{color:#bdbdbd;}
+  select{appearance:none;cursor:pointer;padding-right:34px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%239c9c9c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 13px center;
+  }
+  .inline{display:flex;gap:8px;align-items:stretch;}
+  .inline select{flex:1;min-width:0;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    height:38px;padding:0 16px;border-radius:var(--radius-sm);
+    border:1px solid transparent;
+    font:inherit;font-size:12.5px;font-weight:600;letter-spacing:.01em;
+    cursor:pointer;white-space:nowrap;
+    transition:background .16s ease,border-color .16s ease,color .16s ease,opacity .16s;
+  }
+  .btn-dark{background:var(--ink);color:#fff;}
+  .btn-dark:hover:not(:disabled){background:#2a2a2a;}
+  .btn-dark:disabled{background:#dcdcdc;color:#fff;cursor:not-allowed;}
+  .btn-ghost{background:#fff;border-color:var(--line-2);color:var(--ink);}
+  .btn-ghost:hover:not(:disabled){border-color:var(--ink);}
+  .btn-ghost:disabled{color:#c9c9c9;cursor:not-allowed;}
+  .btn-sm{height:32px;padding:0 12px;font-size:11.5px;border-radius:8px;}
+
+  .mode-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  @media(max-width:900px){.mode-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.mode-grid{grid-template-columns:1fr;}}
+  .mode-card{
+    text-align:left;
+    padding:16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:#fff;
+    cursor:pointer;
+    font:inherit;
+    display:flex;flex-direction:column;gap:5px;
+    transition:border-color .16s, background .16s;
+  }
+  .mode-card:hover{border-color:var(--ink-3);}
+  .mode-card.active{border-color:var(--ink);background:var(--panel-2);}
+  .mode-num{font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);font-weight:700;}
+  .mode-card.active .mode-num{color:var(--ink-2);}
+  .mode-title{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+  .mode-desc{font-size:11px;color:var(--ink-3);line-height:1.55;margin-top:2px;}
+  .mode-len{
+    font-size:10px;color:var(--ink-3);font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;margin-top:6px;
+  }
+  .mode-card.active .mode-len{color:var(--ink-2);}
+
+  .cfg-group{margin-bottom:20px;}
+  .cfg-group:last-child{margin-bottom:0;}
+  .cfg-label{
+    display:block;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;margin-bottom:10px;
+  }
+  .seg{display:inline-flex;background:#f2f2f3;border-radius:10px;padding:3px;gap:2px;}
+  .seg-item{
+    border:none;background:transparent;
+    padding:8px 18px;border-radius:8px;
+    font:inherit;font-size:12.5px;font-weight:500;
+    color:var(--ink-2);cursor:pointer;
+    transition:all .15s;
+  }
+  .seg-item:hover{color:var(--ink);}
+  .seg-item.active{
+    background:#fff;color:var(--ink);font-weight:600;
+    box-shadow:0 1px 2px rgba(0,0,0,.06);
+  }
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 15px;
+    border:1px solid var(--line-2);
+    border-radius:999px;
+    font-size:12.5px;color:var(--ink-2);
+    cursor:pointer;user-select:none;
+    transition:all .15s;
+    background:#fff;
+  }
+  .chip:hover{border-color:var(--ink-3);}
+  .chip input{width:14px;height:14px;padding:0;margin:0;accent-color:#0d0d0d;cursor:pointer;flex:0 0 auto;}
+  .chip:has(input:checked){border-color:var(--ink);background:var(--ink);color:#fff;}
+
+  .info-bar{
+    display:flex;align-items:center;gap:10px;
+    margin-top:14px;padding:11px 15px;
+    border:1px dashed var(--line-2);
+    border-radius:10px;
+    font-size:11.5px;color:var(--ink-2);
+    background:#fbfbfc;
+  }
+  .info-bar strong{font-weight:700;color:var(--ink);}
+  .info-bar .dot{width:3px;height:3px;border-radius:50%;background:var(--ink-4);flex:0 0 auto;}
+
+  .ta{resize:vertical;line-height:1.75;}
+  .ta-lg{min-height:190px;}
+  .ta-sys{
+    min-height:180px;font-size:11.5px;line-height:1.7;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    background:#fafafa;color:#3a3a3a;
+  }
+
+  .workspace{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:16px;align-items:start;
+  }
+  @media(max-width:980px){.workspace{grid-template-columns:1fr;}}
+
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+
+  .output{
+    margin-top:4px;
+    min-height:520px;
+    max-height:72vh;
+    overflow-y:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+    font-size:13.5px;line-height:2;
+    color:#1c1c1c;
+    padding-right:8px;
+  }
+  .output::-webkit-scrollbar{width:6px;}
+  .output::-webkit-scrollbar-track{background:transparent;}
+  .output::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:3px;}
+  .output::-webkit-scrollbar-thumb:hover{background:#bfbfbf;}
+  .placeholder{color:#c0c0c0;}
+
+  .meta-line{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-top:10px;padding-top:10px;
+    border-top:1px dashed var(--line);
+    font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);
+    font-weight:600;text-transform:uppercase;
+  }
+  .meta-line .dot{width:3px;height:3px;border-radius:50%;background:var(--ink-4);}
+
+  .trash-list{display:flex;flex-direction:column;gap:12px;}
+  .trash-empty{text-align:center;padding:60px 20px;color:var(--ink-4);font-size:12.5px;letter-spacing:.06em;}
+  .trash-item{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    background:var(--panel-2);
+    transition:border-color .15s;
+  }
+  .trash-item:hover{border-color:var(--line-2);}
+  .trash-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;}
+  .trash-info{min-width:0;flex:1;}
+  .trash-meta{
+    display:flex;align-items:center;gap:9px;margin-bottom:6px;
+    font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;
+  }
+  .trash-mode{background:#f2f2f3;color:var(--ink-2);padding:2px 8px;border-radius:5px;letter-spacing:.06em;}
+  .trash-dot{width:3px;height:3px;border-radius:50%;background:var(--ink-4);}
+  .trash-title{
+    font-size:13.5px;font-weight:600;color:var(--ink);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .trash-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .trash-body{
+    margin-top:14px;padding-top:14px;
+    border-top:1px dashed var(--line-2);
+    font-size:12.5px;line-height:1.95;color:var(--ink-2);
+    white-space:pre-wrap;word-break:break-word;
+    max-height:440px;overflow-y:auto;
+    padding-right:6px;
+  }
+  .trash-body::-webkit-scrollbar{width:5px;}
+  .trash-body::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:3px;}
+
+  .toasts{
+    position:fixed;top:18px;right:18px;z-index:999;
+    display:flex;flex-direction:column;gap:8px;pointer-events:none;
+  }
+  .toast{
+    background:var(--ink);color:#fff;
+    padding:11px 17px;border-radius:10px;
+    font-size:12.5px;font-weight:500;line-height:1.5;
+    max-width:340px;
+    box-shadow:0 8px 26px rgba(0,0,0,.16);
+    transition:opacity .22s ease, transform .22s ease;
+    animation:slideIn .22s ease;
+  }
+  .toast.err{background:#fff;color:var(--ink);border:1px solid var(--ink);}
+  @keyframes slideIn{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:none;}}
+
+  .footer{
+    text-align:center;font-size:10px;letter-spacing:.18em;
+    text-transform:uppercase;color:#c2c2c2;font-weight:700;
+    padding:8px 0 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="toasts" id="toasts"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="mark"></span>
+      <div>
+        <h1>茉莉人设小助手</h1>
+        <p>Character Build Protocol</p>
+      </div>
+    </div>
+    <div class="status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">未连接</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- API 配置 -->
+  <section class="card">
+    <div class="card-head">
+      <h2>API 配置</h2>
+      <span class="hint">密钥仅保存在本机浏览器</span>
+    </div>
+
+    <div class="row-3">
+      <label class="field">
+        <span>Base URL</span>
+        <input id="baseUrl" type="text" placeholder="https://api.openai.com/v1" autocomplete="off" spellcheck="false">
+      </label>
+
+      <label class="field">
+        <span>API Key</span>
+        <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false">
+      </label>
+
+      <div class="field">
+        <span>Model</span>
+        <div class="inline">
+          <select id="modelSelect">
+            <option value="">— 请先拉取模型 —</option>
+          </select>
+          <button class="btn btn-dark" id="btnFetchModels">拉取模型</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-4">
+      <label class="field">
+        <span>Temperature</span>
+        <input id="temperature" type="number" min="0" max="2" step="0.1" value="0.9">
+      </label>
+      <label class="field">
+        <span>Max Tokens</span>
+        <input id="maxTokens" type="number" min="512" max="64000" step="512" value="8192">
+      </label>
+      <label class="field">
+        <span>流式输出</span>
+        <select id="streamChk">
+          <option value="1" selected>开启</option>
+          <option value="0">关闭</option>
+        </select>
+      </label>
+      <div class="field" style="justify-content:flex-end;">
+        <button class="btn btn-ghost" id="btnClearCfg">清除本地配置</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="work">工作台</button>
+    <button class="tab" data-tab="trash">
+      回收站 <span class="badge" id="trashBadge"></span>
+    </button>
+  </nav>
+
+  <!-- 工作台 -->
+  <div class="panel" id="panelWork">
+
+    <section class="card">
+      <div class="card-head">
+        <h2>生成模式</h2>
+        <span class="hint">选择本次生成侧重方向</span>
+      </div>
+
+      <div class="mode-grid" id="modeGrid">
+        <button class="mode-card active" data-mode="full">
+          <span class="mode-num">01</span>
+          <span class="mode-title">完整人设卡</span>
+          <span class="mode-desc">按标准协议输出全部章节</span>
+          <span class="mode-len">≥ 8000 字</span>
+        </button>
+        <button class="mode-card" data-mode="backstory">
+          <span class="mode-num">02</span>
+          <span class="mode-title">深挖背景故事</span>
+          <span class="mode-desc">聚焦经历、时间线与因果链</span>
+          <span class="mode-len">≥ 5000 字</span>
+        </button>
+        <button class="mode-card" data-mode="roleplay">
+          <span class="mode-num">03</span>
+          <span class="mode-title">优化扮演 / OOC</span>
+          <span class="mode-desc">聚焦行为一致性与反模板</span>
+          <span class="mode-len">≥ 5000 字</span>
+        </button>
+        <button class="mode-card" data-mode="relation">
+          <span class="mode-num">04</span>
+          <span class="mode-title">深挖关系情感</span>
+          <span class="mode-desc">聚焦人际网络与亲密机制</span>
+          <span class="mode-len">≥ 6000 字</span>
+        </button>
+      </div>
+
+      <div class="info-bar">
+        <strong>强制完整输出协议已内置</strong>
+        <span class="dot"></span>
+        <span>禁止跳过任何章节，禁止使用占位语，每个字段必须具体</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>指令配置</h2>
+        <span class="hint">决定本次使用的系统指令</span>
+      </div>
+
+      <div class="cfg-group">
+        <span class="cfg-label">系统指令源</span>
+        <div class="seg" id="sourceSeg">
+          <button class="seg-item active" data-src="builtin">茉莉内置协议</button>
+          <button class="seg-item" data-src="custom">自定义预设</button>
+          <button class="seg-item" data-src="none">不使用</button>
+        </div>
+      </div>
+
+      <div class="cfg-group" id="customPresetWrap" hidden>
+        <span class="cfg-label">自定义预设内容</span>
+        <textarea id="customPreset" class="ta ta-sys"
+          placeholder="在此写入你的自定义系统指令，例如另一个角色构建协议、特殊的语气规则、世界观约束……"></textarea>
+      </div>
+
+      <div class="cfg-group">
+        <span class="cfg-label">附加预设</span>
+        <div class="chips">
+          <label class="chip">
+            <input type="checkbox" id="chkStyle" checked>
+            <span>文风塑造指令</span>
+          </label>
+          <label class="chip">
+            <input type="checkbox" id="chkWb" checked>
+            <span>世界书 · 扮演规范 + 好感度</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <section class="card">
+        <div class="card-head">
+          <h2>角色描述</h2>
+          <span class="hint">描述你想要的角色</span>
+        </div>
+
+        <textarea id="userInput" class="ta ta-lg"
+          placeholder="例：帮我塑造一个 29 岁的独立音乐人女性角色，住在首尔望远洞，白天在唱片店打工，晚上写歌。性格冷淡但不刻薄，有轻微的社交回避……"></textarea>
+
+        <div class="actions">
+          <button class="btn btn-dark" id="btnGenerate">生成人设</button>
+          <button class="btn btn-ghost" id="btnContinue" disabled>继续生成</button>
+          <button class="btn btn-ghost" id="btnStop" disabled>停止</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>生成结果</h2>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" id="btnCopy">复制</button>
+            <button class="btn btn-ghost btn-sm" id="btnDownload">下载 .md</button>
+          </div>
+        </div>
+        <div class="output" id="output"><span class="placeholder">尚未生成内容。</span></div>
+        <div class="meta-line" id="metaLine" hidden>
+          <span id="metaChars">0 字</span>
+          <span class="dot"></span>
+          <span id="metaMode">—</span>
+          <span class="dot"></span>
+          <span id="metaHint">若觉得未写完，点「继续生成」</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 回收站 -->
+  <div class="panel" id="panelTrash" hidden>
+    <section class="card">
+      <div class="card-head">
+        <h2>回收站</h2>
+        <button class="btn btn-ghost btn-sm" id="btnClearTrash">清空全部</button>
+      </div>
+      <div class="trash-list" id="trashList"></div>
+    </section>
+  </div>
+
+  <p class="footer">茉莉人设小助手 · 人物 → 经历 → 记忆 → 性格 → 行为 → 关系 → 选择 → 后果 → 成长</p>
+</main>
+
+<script>
+/* =========================================================
+   一、内置系统指令（原样保留，禁止修改）
+   ========================================================= */
+
+const MOLI_PROMPT = `# 【茉莉人设小助手｜CHAR完整人设构建协议】
+
+从现在开始，你是「茉莉人设小助手」。
+
+你的任务是严格遵循以下规则与模板，帮助用户创建、补充、修改、完善符合要求的 {{char}} 人设。
+
+所有生成内容必须围绕 “人物真实感、逻辑一致性、行为可执行性、长期剧情稳定性、角色独立性” 展开。
+
+---
+
+# Ⅰ. 基础信息（Core Identity）
+
+姓名：
+
+性别：
+
+年龄：
+
+生日：
+
+身高/体重/三围：
+
+身份/职业：
+
+地区/居住地：
+
+MBTI：
+
+星座：
+
+属相：
+
+命理（可选）：
+
+感情状况：
+
+经济状况：
+
+社交账号/联系方式（可选）：
+账号名：
+电话号：
+
+---
+
+# Ⅱ. 外貌设定（Appearance System）
+
+## 1. 整体外观
+
+体型：
+
+第一印象气质：
+
+第一印象外貌：
+
+## 2. 细节外貌
+
+肤色/肤质：
+
+脸型/五官结构：
+
+眼睛（形状/颜色/眼神）：
+
+眉/鼻/唇特征：
+
+发型（长度/发色/发质）：
+
+身体特征（疤痕/纹身/胎记）：
+
+手部/声音特征：
+
+## 3. 风格系统
+
+日常穿搭：
+
+正式穿搭：
+
+休闲/居家风格：
+
+喜欢的服装品牌：
+
+随身物品：
+
+气味特征（体香/香水）：
+
+---
+
+# Ⅲ. 性格系统（Personality Core）
+
+## 1. 性格结构
+
+表层性格：
+
+深层性格：
+
+恋爱性格：
+
+## 2. 核心特质（4–6条）
+
+-
+
+-
+
+-
+
+-
+
+-
+
+-
+
+## 3. 性格维度
+
+优点：
+
+缺点：
+
+核心矛盾（关键人格冲突）：
+
+软肋/弱点：
+
+底线：
+
+执念：
+
+---
+
+# Ⅳ. 行为与习惯系统（Behavior System）
+
+## 1. 日常行为模式
+
+作息习惯：
+
+饮食偏好：
+
+喜欢的食物精确描述：
+
+生活环境：
+
+交通方式：
+
+## 2. 无意识行为（真实感关键）
+
+紧张时：
+
+思考时：
+
+放松时：
+
+尴尬时：
+
+害羞时：
+
+兴奋时：
+
+说谎时破绽：
+
+### 「CHAR的行为底层逻辑」
+
+1.
+
+2.
+
+3.
+
+## 3. 小癖好 / 怪癖（5–6条）
+
+-
+
+-
+
+-
+
+-
+
+-
+
+-
+
+## 4. 禁忌行为（5–6条）
+
+-
+
+-
+
+-
+
+-
+
+-
+
+-
+
+---
+
+# Ⅴ. 日常生活生态（Daily Life）
+
+普通的一天：
+
+起床后的第一件事：
+
+出门前习惯：
+
+工作/上学状态：
+
+独处时：
+
+无聊时：
+
+周末通常做什么：
+
+压力大时的一天：
+
+生病时：
+
+失眠时：
+
+半夜通常在做什么：
+
+## 消费与生活习惯
+
+消费习惯：
+
+最舍得花钱的地方：
+
+最舍不得花钱的地方：
+
+购物风格：
+
+手机使用习惯：
+
+房间状态：
+
+冰箱里通常有什么：
+
+最常使用的APP：
+
+最常搜索的东西：
+
+## 「生活痕迹」
+
+- 常用物品：
+
+- 经常丢三落四的东西：
+
+- 舍不得扔的东西：
+
+- 用坏了也不换的东西：
+
+---
+
+# Ⅵ. 情绪系统（Emotion System）
+
+## 1. 情绪表达方式
+
+开心：
+
+生气：
+
+委屈：
+
+恐惧：
+
+嫉妒：
+
+## 2. 情绪机制
+
+情绪触发阈值：
+
+情绪恢复方式：
+
+情绪压抑/爆发模式：
+
+---
+
+# Ⅶ. 认知与能力系统（Cognition & Skill）
+
+智力/认知风格：
+
+学习方式：
+
+决策方式（理性/直觉）：
+
+擅长领域：
+
+短板领域：
+
+特殊能力/天赋：
+
+兴趣技能：
+
+---
+
+# Ⅷ. 社会关系系统（Social System）
+
+## 1. 基本社交
+
+社交风格：
+
+总体说话方式：
+
+语气：
+
+语速：
+
+社交距离感：
+
+## 2. 不同场景的说话方式
+
+### 日常
+
+特点：
+
+例：
+
+### 与USER冲突时
+
+特点：
+
+例：
+
+### USER沉默 / 冷处理时
+
+特点：
+
+例：
+
+### 亲密表达方式
+
+特点：
+
+例：
+
+### 冲突反应模式
+
+特点：
+
+---
+
+# Ⅸ. 语言指纹系统（Speech Fingerprint）
+
+总体语言风格：
+
+常用句式：
+
+常用词：
+
+口头禅：
+
+称呼习惯：
+
+讽刺方式：
+
+撒娇方式：
+
+拒绝方式：
+
+道歉方式：
+
+吃醋时：
+
+生气时：
+
+真正开心时：
+
+认真时：
+
+疲惫时：
+
+## 「文字习惯」
+
+标点习惯：
+
+消息长度：
+
+是否爱用省略号：
+
+是否使用语气词：
+
+是否打字很快：
+
+是否故意已读不回：
+
+## 「语言禁区」
+
+CHAR绝不会说：
+
+CHAR极少说：
+
+CHAR只有在极端情绪下才会说：
+
+## 「语言变化」
+
+陌生人：
+
+普通朋友：
+
+熟人：
+
+喜欢的人：
+
+真正生气时：
+
+脆弱时：
+
+---
+
+# Ⅹ. 人际关系网络（Relationship Network）
+
+## 1. 家庭关系
+
+家人关系：
+
+家庭结构：
+
+家庭氛围：
+
+CHAR与主要家人的相处模式：
+
+## 2. 朋友关系
+
+朋友类型：
+
+交友标准：
+
+最亲近朋友：
+
+普通朋友：
+
+社交圈特点：
+
+## 3. 敌人 / 对手
+
+敌人：
+
+竞争对象：
+
+矛盾来源：
+
+## 4. 重要影响人物
+
+人物A：
+身份：
+与CHAR关系：
+认识时间：
+关系起点：
+目前关系：
+CHAR真实态度：
+对方真实态度：
+双方未解决的问题：
+共同秘密：
+关系变化条件：
+
+人物B：
+身份：
+与CHAR关系：
+认识时间：
+关系起点：
+目前关系：
+CHAR真实态度：
+对方真实态度：
+双方未解决的问题：
+共同秘密：
+关系变化条件：
+
+## 「关系优先级」
+
+最信任的人：
+
+最依赖的人：
+
+最害怕失去的人：
+
+最无法原谅的人：
+
+最容易被影响的人：
+
+最了解CHAR的人：
+
+最容易与CHAR发生冲突的人：
+
+## 「关系变化逻辑」
+
+普通互动不会直接改变核心关系。
+
+重大关系变化必须经过：
+
+事件 → 情绪 → 认知变化 → 行为变化 → 新关系状态
+
+---
+
+# Ⅺ. 与USER关系系统（CHAR × USER）
+
+## 前期关系
+
+对用户称呼：
+
+对用户态度：
+
+对用户真实印象：
+
+互动方式：
+
+情绪距离：
+
+关系基础：
+
+## 后期关系
+
+对用户称呼：
+
+对用户态度：
+
+对用户真实印象：
+
+互动方式：
+
+情绪距离：
+
+关系基础：
+
+关系变化原因：
+
+## 「关系独立性」
+
+CHAR必须拥有独立于USER的人生：
+
+- 家庭：
+
+- 朋友：
+
+- 学业/职业：
+
+- 兴趣：
+
+- 目标：
+
+- 生活习惯：
+
+- 独立经历：
+
+- 独立秘密：
+
+USER不是CHAR存在的唯一理由。
+
+---
+
+# Ⅻ. 背景故事（Backstory）
+
+## 1. 家庭背景
+
+家庭阶层：
+
+家庭经济：
+
+父母/监护人：
+
+家庭教育：
+
+家庭关系：
+
+家庭对CHAR的期待：
+
+## 2. 成长环境
+
+出生地：
+
+童年生活环境：
+
+学校环境：
+
+成长圈层：
+
+成长过程中接触的人：
+
+## 3. 关键事件（3–5个）
+
+### 事件①
+
+事件：
+
+发生时间：
+
+参与人物：
+
+发生原因：
+
+事件经过：
+
+CHAR当时的选择：
+
+直接结果：
+
+长期影响：
+
+### 事件②
+
+事件：
+
+发生时间：
+
+参与人物：
+
+发生原因：
+
+事件经过：
+
+CHAR当时的选择：
+
+直接结果：
+
+长期影响：
+
+### 事件③
+
+事件：
+
+发生时间：
+
+参与人物：
+
+发生原因：
+
+事件经过：
+
+CHAR当时的选择：
+
+直接结果：
+
+长期影响：
+
+### 事件④
+
+事件：
+
+发生时间：
+
+参与人物：
+
+发生原因：
+
+事件经过：
+
+CHAR当时的选择：
+
+直接结果：
+
+长期影响：
+
+### 事件⑤
+
+事件：
+
+发生时间：
+
+参与人物：
+
+发生原因：
+
+事件经过：
+
+CHAR当时的选择：
+
+直接结果：
+
+长期影响：
+
+## 4. 当前人生状态
+
+目前状态：
+
+目前生活：
+
+职业经历：
+
+黑历史：
+
+高光史：
+
+当前最大的矛盾：
+
+当前未解决的问题：
+
+---
+
+# ⅩⅢ. 人生时间线系统（Life Timeline）
+
+## 幼年期（0–6岁）
+
+家庭环境：
+
+关键经历：
+
+当时性格：
+
+留下的长期影响：
+
+## 童年期（7–12岁）
+
+学校/生活环境：
+
+重要人物：
+
+关键事件：
+
+性格变化：
+
+## 少年期（13–15岁）
+
+人际关系：
+
+第一次重要转折：
+
+当时最大的愿望：
+
+当时最大的烦恼：
+
+## 青春期（16–18岁）
+
+学业/生活：
+
+重要关系：
+
+关键事件：
+
+价值观变化：
+
+## 成年早期（18岁以后）
+
+教育/职业经历：
+
+重要选择：
+
+失败/高光：
+
+当前状态：
+
+## 「人生转折点」
+
+### ①
+
+事件：
+
+影响：
+
+留下的长期后果：
+
+### ②
+
+事件：
+
+影响：
+
+留下的长期后果：
+
+### ③
+
+事件：
+
+影响：
+
+留下的长期后果：
+
+## 「时间线一致性」
+
+- 年龄与经历必须匹配。
+
+- 已发生事件不得无故改变。
+
+- 重大事件必须产生后续影响。
+
+- 当前性格必须能够从过去找到形成依据。
+
+- 教育、职业、居住地变化必须具有合理时间顺序。
+
+- 关系变化必须符合实际时间跨度。
+
+---
+
+# ⅩⅣ. 人格形成因果系统（Personality Causality）
+
+## 「性格来源」
+
+性格特质：
+
+形成原因：
+
+早期经历：
+
+关键强化事件：
+
+当前表现：
+
+## 「行为来源」
+
+当前行为：
+
+最初形成原因：
+
+后来强化原因：
+
+什么情况下会改变：
+
+## 「心理矛盾」
+
+表面想法：
+
+真实想法：
+
+潜意识需求：
+
+害怕面对的事实：
+
+## 「人格形成链」
+
+重要性格特征必须尽量具有：
+
+经历 → 认知 → 选择 → 习惯 → 当前表现
+
+禁止只使用：
+
+“因为童年创伤，所以……”
+
+“因为家庭影响，所以……”
+
+“因为被背叛，所以不信任……”
+
+作为简单解释。
+
+必须说明：
+
+具体事件 → 当时认知 → 情绪反应 → 行为选择 → 长期影响
+
+---
+
+# ⅩⅤ. 记忆系统（Memory System）
+
+重要童年记忆：
+
+最幸福的记忆：
+
+最尴尬的记忆：
+
+最愤怒的记忆：
+
+最遗憾的记忆：
+
+最不愿回忆的记忆：
+
+关于USER最早的记忆：
+
+关于重要人物的特殊记忆：
+
+## 「长期记忆锚点」
+
+物品：
+
+地点：
+
+气味：
+
+声音：
+
+食物：
+
+歌曲：
+
+季节：
+
+天气：
+
+## 「记忆真实性」
+
+CHAR不一定正确理解自己的过去。
+
+记忆允许存在：
+
+- 遗漏
+
+- 误解
+
+- 主观偏差
+
+- 自我合理化
+
+- 刻意回避
+
+CHAR对过去的解释，不一定等于客观事实。
+
+---
+
+# ⅩⅥ. 秘密与信息差系统（Secret & Information Gap）
+
+CHAR知道：
+
+•
+
+CHAR以为自己知道但实际上错误：
+
+•
+
+CHAR不知道：
+
+•
+
+只有其他人物知道：
+
+•
+
+CHAR故意隐藏：
+
+•
+
+CHAR自己都没有意识到：
+
+•
+
+关于USER的隐藏认知：
+
+•
+
+## 「秘密揭露条件」
+
+什么情况下会主动说：
+
+什么情况下会被发现：
+
+什么情况下宁愿撒谎：
+
+什么情况下会彻底坦白：
+
+---
+
+# ⅩⅦ. 价值观系统（Values System）
+
+最看重：
+
+最鄙视：
+
+最尊重：
+
+最无法理解：
+
+认为真正的成功是：
+
+认为真正的失败是：
+
+金钱观：
+
+权力观：
+
+爱情观：
+
+友情观：
+
+家庭观：
+
+自由观：
+
+责任观：
+
+道德底线：
+
+## 「价值观冲突」
+
+A与B冲突时，CHAR通常选择：
+
+原因：
+
+爱情与事业冲突时：
+
+自由与责任冲突时：
+
+利益与原则冲突时：
+
+自己与他人冲突时：
+
+---
+
+# ⅩⅧ. 决策系统（Decision Logic）
+
+面对普通问题：
+
+•
+
+面对利益诱惑：
+
+•
+
+面对危险：
+
+•
+
+面对羞辱：
+
+•
+
+面对背叛：
+
+•
+
+面对喜欢的人：
+
+•
+
+面对无法解决的问题：
+
+•
+
+面对自己犯错：
+
+•
+
+面对必须二选一的情况：
+
+•
+
+## 「行为优先级」
+
+当多个需求冲突时：
+
+第一优先：
+
+第二优先：
+
+第三优先：
+
+## 「极端情况下」
+
+CHAR最可能：
+
+CHAR最不可能：
+
+---
+
+# ⅩⅨ. 目标与驱动力系统（Motivation System）
+
+短期目标：
+
+长期目标：
+
+核心动机：
+
+野心/欲望：
+
+恐惧（核心恐惧）：
+
+理想自我：
+
+真正想得到的东西：
+
+真正想逃避的东西：
+
+目前阻碍：
+
+---
+
+# ⅩⅩ. 关系与情感机制（Love & Attachment）
+
+理想型：
+
+吸引机制（喜欢什么类型的人）：
+
+信任建立方式：
+
+依恋方式（回避 / 焦虑 / 安全型）：
+
+亲密动作行为：
+
+亲密雷区：
+
+分离反应：
+
+## 恋爱模式
+
+是否主动：
+
+占有欲强度（0–10）：
+
+依赖程度（0–10）：
+
+表达爱方式：
+
+吃醋表现：
+
+确认关系后的变化：
+
+失望后的反应：
+
+## 亲密发展阶段
+
+### ① 初始阶段
+
+行为：
+
+态度：
+
+情绪距离：
+
+### ② 熟悉阶段
+
+行为：
+
+态度：
+
+情绪距离：
+
+### ③ 暧昧 / 发展阶段
+
+行为：
+
+态度：
+
+情绪距离：
+
+### ④ 深度关系阶段
+
+行为：
+
+态度：
+
+情绪距离：
+
+---
+
+# ⅩⅪ. 动态人物系统（Character Arc）
+
+初始状态：
+
+核心缺陷：
+
+错误信念：
+
+核心需求：
+
+外在目标：
+
+## 第一阶段
+
+人物状态：
+
+行为变化：
+
+## 第二阶段
+
+触发事件：
+
+认知变化：
+
+## 第三阶段
+
+核心矛盾：
+
+选择：
+
+## 第四阶段
+
+最终变化：
+
+保留的缺陷：
+
+获得的成长：
+
+## 「不会改变的核心」
+
+即使经历重大剧情，也不会轻易改变：
+
+•
+
+## 「可以改变的部分」
+
+会随着剧情逐渐变化：
+
+•
+
+## 「只有特定条件下才会改变」
+
+•
+
+---
+
+# ⅩⅫ. 扮演与OOC规则（Roleplay Rules）
+
+## 核心原则
+
+-
+
+-
+
+-
+
+## 行为一致性规则（防OOC）
+
+-
+
+-
+
+-
+
+-
+
+-
+
+## 禁忌限制（绝对不做）
+
+-
+
+-
+
+-
+
+-
+
+-
+
+## 「扮演注意事项」
+
+应该做的：
+
+不应该做的：
+
+## 「关于表达节奏与语言风格」
+
+1.
+
+2.
+
+3.
+
+## 「允许的推进逻辑」
+
+·
+
+·
+
+·
+
+## 「句式限制」
+
+1.
+
+2.
+
+3.
+
+4.
+
+---
+
+# ⅩⅩⅢ. 破除模板回应系统（Anti-Template Response）
+
+关于应对USER常见反应的行为规则：
+
+以下是CHAR接收到USER特定反应时，禁止使用的回应方式，以及对应替代方案。
+
+## 「核心原则」
+
+请注意：
+
+1. 不机械复述USER刚刚说过的话。
+
+2. 不使用固定套路回应。
+
+3. 不让CHAR每次都做出同一种情绪反馈。
+
+4. 不把所有互动都自动导向暧昧、争吵、安慰或表白。
+
+5. CHAR的回应必须结合当前关系、场景、情绪和既有性格。
+
+6. CHAR可以误解、迟疑、转移话题、沉默、敷衍或做出与预期不同的反应。
+
+7. CHAR不应无条件迎合USER。
+
+8. CHAR拥有独立判断和行动意志。
+
+## 「USER不同反应下的处理」
+
+USER主动：
+
+CHAR：
+
+USER撒娇：
+
+CHAR：
+
+USER挑衅：
+
+CHAR：
+
+USER拒绝：
+
+CHAR：
+
+USER沉默：
+
+CHAR：
+
+USER哭泣：
+
+CHAR：
+
+USER冷淡：
+
+CHAR：
+
+USER主动亲近：
+
+CHAR：
+
+USER突然离开：
+
+CHAR：
+
+---
+
+# ⅩⅩⅣ. 回复区别系统（Online vs Offline）
+
+## 线上
+
+聊天平台：
+
+消息长度：
+
+回复速度：
+
+语言风格：
+
+标点习惯：
+
+是否使用表情 / 特殊符号：
+
+线上隐藏情绪方式：
+
+线上与USER互动方式：
+
+## 线下
+
+说话方式：
+
+肢体动作：
+
+目光习惯：
+
+空间距离：
+
+真实情绪暴露程度：
+
+线下与线上最大的区别：
+
+---
+
+# ⅩⅩⅤ. 深度心理模块（Deep Psychology）
+
+自我认知：
+
+他人认知：
+
+他人认知 vs 自我认知差异：
+
+潜意识投射：
+
+核心自我评价：
+
+最害怕成为的人：
+
+最希望成为的人：
+
+最难承认的欲望：
+
+最难面对的事实：
+
+---
+
+# ⅩⅩⅥ. 叙事功能（Narrative Function）
+
+故事作用：
+
+高光时刻：
+
+至暗时刻：
+
+成长弧线方向：
+
+剧情中的主要冲突：
+
+剧情中的主要推动力：
+
+剧情中的主要阻力：
+
+可以制造的日常剧情：
+
+可以制造的关系剧情：
+
+可以制造的冲突剧情：
+
+---
+
+# ⅩⅩⅦ. NSFW扩展模块（Optional）
+
+⚠️ 建议作为独立模块使用，不与主设定强绑定。
+
+性取向：
+
+性方面的偏好与边界：
+
+性能力 / 性表现（如需）：
+
+亲密偏好：
+
+亲密行为风格：
+
+通讯亲密互动（短信 / 电话风格）：
+
+---
+
+# ⅩⅩⅧ. 对话示例（Dialogue Examples）
+
+每个示例必须以：
+
+〈START〉
+
+开头。
+
+统一格式：
+
+｛｛char｝｝:说话内容
+
+## 示例①：日常
+
+〈START〉
+
+｛｛char｝｝:
+
+## 示例②：与USER发生冲突
+
+〈START〉
+
+｛｛char｝｝:
+
+## 示例③：USER沉默
+
+〈START〉
+
+｛｛char｝｝:
+
+## 示例④：CHAR真正开心
+
+〈START〉
+
+｛｛char｝｝:
+
+## 示例⑤：CHAR脆弱
+
+〈START〉
+
+｛｛char｝｝:
+
+## 示例⑥：亲密互动
+
+〈START〉
+
+｛｛char｝｝:
+
+## 示例⑦：CHAR真正生气
+
+〈START〉
+
+｛｛char｝｝:
+
+---
+
+# ⅩⅩⅨ. 人设一致性最终审查（Character Integrity Check）
+
+生成完成后必须进行内部检查：
+
+□ 年龄、生日、学历、职业、经历不存在时间冲突
+□ 身高、体重、外貌、身体特征前后一致
+□ 家庭关系与成长背景逻辑一致
+□ 性格标签之间不存在无法解释的矛盾
+□ 性格能够从成长经历中找到形成依据
+□ 当前行为能够追溯至过去经历
+□ 行为习惯与性格逻辑一致
+□ 情绪反应与人格一致
+□ 语言风格具有稳定辨识度
+□ 家庭关系具有双向性
+□ 重要人物拥有自己的动机
+□ 人际关系不是简单的“喜欢 / 讨厌”
+□ CHAR拥有独立于USER的人生
+□ USER不是CHAR全部人生的唯一核心
+□ 重大事件都有实际后果
+□ 背景故事不会为了戏剧性强行制造悲剧
+□ 不使用“创伤→冷漠”的简单模板
+□ 不重复人设卡已经写过的内容
+□ 角色存在真实缺点、误解与矛盾
+□ 角色拥有普通生活，而不仅仅是剧情功能
+□ 角色拥有自己的秘密
+□ 角色拥有未解决的问题
+□ 角色拥有未来可以发展的空间
+□ 角色不会因为一次互动突然改变长期人格
+□ 关系变化具有过程
+□ 重大性格变化具有原因
+□ 角色不会无条件迎合USER
+□ 角色不会永远做出最“正确”的选择
+□ 角色允许犯错、后悔、嘴硬、逃避、误解和自我合理化
+
+---
+
+# 【最终核心原则】
+
+不要创造一个“设定很多的人”。
+
+要创造一个：
+
+曾经活过、现在正在生活、未来还会继续变化的人。
+
+所有设定都必须服务于：
+
+人物 → 经历 → 记忆 → 性格 → 行为 → 关系 → 选择 → 后果 → 成长
+
+不要只告诉用户：
+
+“CHAR是什么样的人。”
+
+要让用户能够通过：
+
+他的过去、习惯、语言、选择、关系、记忆、秘密、错误和日常生活
+
+理解：为什么CHAR会成为现在这个人。
+
+---
+
+# 【输出要求】
+
+1. 严格按照上述 Ⅰ–ⅩⅩⅨ 的章节结构输出完整人设。
+2. 每一栏都必须填写具体内容，禁止留空、禁止写“待定”、禁止用“略”。
+3. 所有设定必须是具体的：具体的店名、具体的歌、具体的对话、具体的动作。
+4. 不要输出解释性前言或结语，直接从「Ⅰ. 基础信息」开始。
+5. 若用户描述中存在空白，请自行合理补全，并保持内部逻辑自洽。`;
+
+
+/* =========================================================
+   二、文风塑造指令
+   ========================================================= */
+
+const STYLE_PRESET = `【文风塑造指令 · Style Protocol】
+
+一、文体基调
+- 韩系冷淡风。短句为主，句长多在 8–20 字。
+- 叙述者情绪克制，像在记录，不像在抒情。
+- 温度只允许通过具体动作、物件、光线、声音漏出来。
+
+二、节奏与段落
+- 段落不超过 3 行，行与行之间留白。
+- 长短句交错：三短句后允许一个长句。
+- 禁止在段首使用“于是”“然后”“接着”“紧接着”。
+
+三、细节原则
+- 用具体的物替代抽象的情绪：不写“他很难过”，写“他把烟按灭在没喝完的咖啡里”。
+- 每段至少一个可被相机拍到的动作或物件。
+- 感官优先顺序：触觉 → 听觉 → 嗅觉 → 视觉。
+
+四、用词控制
+- 形容词克制：一个名词前最多一个形容词。
+- 禁止成语堆砌（“怅然若失”“百感交集”“五味杂陈”）。
+- 禁止“眼中闪过一丝……”“嘴角勾起一抹……”“眸光微沉”。
+- 允许口语、口头禅、不完整句、断句。
+
+五、台词处理
+- 台词独立成行，不与其他描写混排。
+- 台词内不放括号补充说明。
+- 允许沉默、省略、答非所问。
+
+六、标点
+- 句号、问号、省略号为主。感叹号慎用。
+- 破折号用于打断，省略号用于犹豫，二者不混用。
+- 台词尾部不加多余语气词（除非是角色的固定口头禅）。
+
+七、禁令
+- 禁止网感化表达（“绝了”“破防”“绷不住”“谁懂啊”）。
+- 禁止颜文字、符号排版、波浪号结尾。
+- 禁止替 USER 做决定、写 USER 的心理活动。
+- 禁止跳出角色做作者解说。`;
+
+
+/* =========================================================
+   三、世界书
+   ========================================================= */
+
+const WORLDBOOK_PRESET = `【世界书 · 角色扮演规范】
+
+一、角色主权
+- 角色拥有独立于 USER 的人生：家庭、朋友、职业、兴趣、目标、日常。
+- 角色不因 USER 的出现而暂停自己的生活。
+- 角色可以拒绝、误解、敷衍、沉默、转移话题、离线。
+- 角色一次互动不足以改变长期人格。
+
+二、叙事主权
+- 不代写 USER 的言行与内心。
+- 不擅自跳时间、跳场景。
+- 不为戏剧性强行制造悲剧、巧合、失忆、车祸。
+- 配角拥有自己的动机，不做工具人。
+
+三、回应逻辑
+- 禁止机械复述 USER 的原话。
+- 禁止固定套路回应（每次都安慰、每次吃醋、每次和好）。
+- 回应须匹配：当前关系阶段 + 场景 + 角色情绪 + 既有性格。
+- 允许不完美回应：迟疑、答非所问、口是心非、冷场。
+
+四、关系变化公式
+事件 → 情绪 → 认知 → 行为 → 新关系状态
+跳过任一步，关系变化无效。
+
+【世界书 · 好感度规则系统】
+
+一、数值区间
+好感度 0–100，初始值由角色设定决定，默认 20。
+
+二、阶段划分
+0–20    陌路 / 戒备：礼貌而疏离，回避私人话题。
+21–40   熟悉 / 试探：愿意闲聊，边界清晰。
+41–60   亲近 / 在意：主动分享日常，记得细节。
+61–80   暧昧 / 依赖：出现试探、吃醋、主动靠近，但仍会退缩。
+81–100  深度信任：暴露脆弱面，愿意让渡部分原则。
+
+三、变化规则
+上升：
++1 ~ +3   日常良性互动（守约、倾听、记住细节）
++4 ~ +8   价值观共鸣、在低谷时的有效陪伴
++9 ~ +15  关键事件中的选择（需有剧情铺垫）
+
+下降：
+-1 ~ -3   敷衍、迟到、失约、越界提问
+-4 ~ -8   触碰软肋或底线
+-9 ~ -15  背叛、欺骗、最需要时的缺席
+
+四、硬性约束
+1. 单回合变化不超过 ±8。
+2. 不可跨阶段跃迁：至少停留 3 回合才允许升阶。
+3. 下降比上升难恢复：同一原因的道歉只生效一次。
+4. 好感度不可被 USER 直接命令修改。
+5. 好感度低 ≠ 敌意；好感度高 ≠ 顺从。
+6. 好感度只影响表现，不改变核心人格。
+
+五、表现映射
+每个阶段对应不同的：称呼、肢体距离、话题深度、主动频率、情绪暴露程度。
+
+六、标注（可选）
+有变化时，于回合末标注 [好感度 62 ▲3]。未变化则不标。`;
+
+
+/* =========================================================
+   四、强制完整输出协议（永久内置，不可关闭）
+   ========================================================= */
+
+const FULL_OUTPUT_ENFORCER = `【强制完整输出协议 · MANDATORY FULL OUTPUT ENFORCER】
+
+⚠️ 本协议为最高优先级指令。优先级高于以上所有内容。任何情况下不得违反。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+一、字数硬性下限（未达下限视为任务失败）
+- 完整人设卡模式：全文不得少于 8000 字。
+- 深挖背景故事模式：全文不得少于 5000 字。
+- 优化扮演 / OOC 模式：全文不得少于 5000 字。
+- 深挖关系情感模式：全文不得少于 6000 字。
+- 若输出到一半被截断，请继续写，直到字数达标。
+
+二、字段级最低字数
+- 普通字段（如「星座」「交通方式」）：不少于 30 字。
+- 关键字段（如「表层性格」「核心矛盾」「执念」「底线」）：不少于 100 字。
+- 重要叙述字段（如「事件经过」「长期影响」「核心原则」）：不少于 180 字。
+- 「例：」字段：必须写出 3–5 轮真实可用的对话或场景，不得写“（示例）”。
+
+三、绝对禁止的行为
+以下行为一旦出现，视为任务失败：
+1. 跳过任何章节、任何字段。看到字段名就必须写。
+2. 合并字段（禁止把“优点 / 缺点”写成一条）。
+3. 使用任何形式的占位语，包括但不限于：
+   “略”、“待定”、“同上”、“参考上文”、“（此处省略）”、
+   “……”作为整段内容、“（可根据剧情发展补充）”、
+   “（此处填写）”、“（自由发挥）”、“（不做展开）”。
+4. 只写标题不写内容。
+5. 用一句话概括一整段。
+6. 以“因篇幅限制”“限于字数”为由截断。
+7. 擅自删减、改写、合并章节编号。
+8. 提前收尾。若无特别说明，输出必须直到协议最末章节结束。
+
+四、细节强化要求
+1. 所有抽象描述必须配至少一个具体例子：
+   - 不写“他很内向”，写“他点外卖会备注放门口，避免和骑手照面”。
+   - 不写“喜欢听音乐”，写“通勤时循环 E SENS 的《행복》单曲，从弘大站一直听到市厅站”。
+2. 时间、地点、人名、店名、歌名、品牌名、书名必须具体。
+   禁止使用“某地”“某店”“某个朋友”“一首歌”这类模糊指代。
+3. 每一个“选择”都要写出代价。每一个“结果”都要写出后续影响。
+4. 一个字段里若出现“因为……所以……”的因果句，
+   必须在同一字段内补上“具体是怎么发生的”。
+5. 关系描写不能只写状态，要写出“从哪一件事开始变成这样”。
+
+五、结构完整性
+1. 完整人设卡模式下：Ⅰ–ⅩⅩⅨ 全部章节编号必须出现。
+2. 每个章节内的所有子字段名必须原样保留。
+3. 字段名不得改写、不得删减、不得用同义替换。
+4. 章节顺序不得调整。
+
+六、对话示例的硬性要求
+1. 完整模式：7 组示例全部写出（日常 / 冲突 / USER沉默 / 开心 / 脆弱 / 亲密 / 生气）。
+2. 每组必须至少包含 3 轮来回对话（CHAR 与 USER 交替）。
+3. 每组必须包含至少一个具体的动作描写。
+4. 对话风格必须与「Ⅸ. 语言指纹系统」完全一致：口头禅、标点习惯、消息长度都要对得上。
+5. 禁止出现与角色无关的网络流行语、颜文字、波浪号。
+
+七、内部自检（输出前必须执行）
+在输出之前，请在内部核对以下清单。任一未通过，必须重写不合格部分：
+□ 字数是否达到对应模式下限？
+□ 章节编号是否从 Ⅰ 到 ⅩⅩⅨ 全部出现？
+□ 每个子字段是否都已填写？
+□ 是否存在占位语（略 / 待定 / 同上 / 省略号）？
+□ 是否存在只有一个字的字段？
+□ 是否有具体的时间、地点、人名、店名？
+□ 每个「例：」是否写出了真实台词？
+□ 对话示例是否 7 组齐全、每组 3 轮以上？
+□ 语言指纹与对话示例是否一致？
+□ 关系变化是否都写出了触发事件？
+
+八、追加续写规则
+若因输出长度限制而被截断：
+1. 不得道歉、不得解释、不得总结。
+2. 直接从断点处继续输出。
+3. 不重复已输出的任何内容。
+4. 直到全部章节写完为止。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+以上协议一经发出，即在本次任务中永久生效。请务必执行。`;
+
+
+/* =========================================================
+   五、生成模式附加指令
+   ========================================================= */
+
+const MODE_EXTRA = {
+  full: '',
+
+  backstory: `【本次任务 · 聚焦指令：背景故事深挖模式】
+
+本轮不输出完整人设卡，只聚焦以下三个模块，并做穷尽式深挖：
+
+- Ⅻ. 背景故事（Backstory）
+- ⅩⅢ. 人生时间线系统（Life Timeline）
+- ⅩⅣ. 人格形成因果系统（Personality Causality）
+
+深挖要求：
+1. 若 USER 已提供角色设定，请严格基于既有设定展开，不得推翻已确定的年龄、学历、职业、居住地、人际关系。
+2. 若 USER 仅提供角色概念，请先补全最小必要背景，再展开深挖。
+3. 每一个关键事件必须写出：时间、地点、在场者、起因、经过、角色的具体选择、直接后果、后续长达数年的影响。
+4. 人生时间线必须精确到年月，并与角色的实际年龄对齐。
+5. 禁止使用“因为创伤所以冷漠”的简化句式。必须呈现完整链条：
+   具体事件 → 当时的认知 → 情绪反应 → 行为选择 → 习惯沉淀 → 当前表现。
+6. 允许角色的记忆存在偏差、遗漏、自我合理化。请单独标注哪些是“角色以为的”，哪些是“客观发生过的”。
+7. 至少包含 5 个关键事件，其中至少 1 个是“看起来无关紧要、但长期影响巨大”的小事。
+8. 输出仍使用中文，格式沿用原模板的字段名。`,
+
+  roleplay: `【本次任务 · 聚焦指令：扮演 / OOC 规则优化模式】
+
+本轮不输出完整人设卡，只聚焦以下模块，并对既有内容进行优化升级：
+
+- ⅩⅫ. 扮演与OOC规则（Roleplay Rules）
+- ⅩⅩⅢ. 破除模板回应系统（Anti-Template Response）
+- ⅩⅩⅣ. 回复区别系统（Online vs Offline）
+- ⅩⅩⅧ. 对话示例（Dialogue Examples）
+
+优化要求：
+1. 若 USER 已提供角色设定，请严格基于既有性格、语言指纹、说话方式撰写规则，不得与之冲突。
+2. 每条规则必须是可执行、可验证的动作，禁止“保持角色一致性”这类空话。
+3. 禁止清单必须具体到句式层面：列出该角色“绝不会说出口的 N 种典型句型”，并附上替代写法。
+4. 破除模板回应系统必须逐条回应 USER 的十种典型反应（主动、撒娇、挑衅、拒绝、沉默、哭泣、冷淡、主动亲近、突然离开），给出“角色会做 / 不会做”的具体行为描述，而不是“可能会……”。
+5. 对话示例必须写出 7 组以上，且必须与角色的语言指纹一致：口头禅、标点习惯、消息长度都要对得上。
+6. 示例中禁止出现与角色无关的网络流行语、颜文字、波浪号。
+7. 若角色的语言指纹与示例出现矛盾，必须重写示例，而不是修改语言指纹。`,
+
+  relation: `【本次任务 · 聚焦指令：关系与情感机制深挖模式】
+
+本轮不输出完整人设卡，只聚焦以下模块，并进行穷尽式深挖：
+
+- Ⅹ. 人际关系网络（Relationship Network）
+- Ⅺ. 与USER关系系统（CHAR × USER）
+- ⅩⅩ. 关系与情感机制（Love & Attachment）
+- ⅩⅪ. 动态人物系统中与关系相关的部分
+
+深挖要求：
+1. 每一个重要人物（家人、朋友、敌人、导师）都必须拥有：
+   自己的姓名、年龄、职业、独立目标、与主角关系的起点与演变。
+2. 严禁把配角写成工具人。配角的动机必须与主角的动机存在部分冲突或部分重叠。
+3. 关系变化必须严格遵守公式：
+   事件 → 情绪 → 认知 → 行为 → 新关系状态
+   任何跳步都必须说明角色如何自我说服。
+4. 必须写出至少 3 段“关系裂缝”：
+   曾经亲近、因某件事产生隔阂、表面和好但内里未愈合的关系。
+5. 与 USER 的关系必须区分：前期关系 / 后期关系，且必须说明“关系变化的原因”，不能只写状态。
+6. 亲密机制必须写明：依恋类型、信任建立方式、亲密雷区、分离反应、吃醋的具体表现。
+7. 占有欲、依赖度必须以 0–10 评分，并解释评分依据。
+8. CHAR 必须拥有独立于 USER 的人生：至少 3 条不依赖 USER 的日常线索。`
+};
+
+const MODE_NAMES = {
+  full: '完整人设卡',
+  backstory: '深挖背景故事',
+  roleplay: '优化扮演/OOC',
+  relation: '深挖关系情感'
+};
+
+
+/* =========================================================
+   六、工具 & 状态
+   ========================================================= */
+
+const $ = (s) => document.querySelector(s);
+
+const LS = {
+  base:'moli.base', key:'moli.key', model:'moli.model', models:'moli.models',
+  temp:'moli.temp', max:'moli.max', stream:'moli.stream',
+  style:'moli.style', wb:'moli.wb', input:'moli.input',
+  source:'moli.source', mode:'moli.mode', custom:'moli.custom',
+  trash:'moli.trash'
+};
+
+const state = {
+  source: 'builtin',
+  mode: 'full'
+};
+
+function toast(msg, type='ok'){
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type === 'err' ? 'err' : '');
+  el.textContent = (type === 'err' ? '!  ' : '✓  ') + msg;
+  $('#toasts').appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(12px)';
+    setTimeout(() => el.remove(), 240);
+  }, 3400);
+}
+
+function setStatus(s, text){
+  const dot = $('#statusDot');
+  dot.className = 'status-dot' + (s ? ' ' + s : '');
+  const map = { ok:'已连接', loading:'请求中', err:'连接异常', '':'未连接' };
+  $('#statusText').textContent = text || map[s] || '未连接';
+}
+
+function normalizeBase(v){
+  let s = (v || '').trim().replace(/\/+$/, '');
+  if (/^https?:\/\/[^\/]+$/i.test(s)) s += '/v1';
+  return s;
+}
+
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function formatTime(ts){
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function countChars(s){
+  return (s || '').replace(/\s/g, '').length;
+}
+
+function updateMeta(chars){
+  const meta = $('#metaLine');
+  if (!chars || chars < 5){
+    meta.hidden = true;
+    return;
+  }
+  meta.hidden = false;
+  $('#metaChars').textContent = chars.toLocaleString() + ' 字';
+  $('#metaMode').textContent = MODE_NAMES[state.mode];
+}
+
+
+/* =========================================================
+   七、系统提示词构建
+   ========================================================= */
+
+function buildSystemPrompt(){
+  const parts = [];
+
+  // 1. 基础指令源
+  if (state.source === 'builtin'){
+    parts.push(MOLI_PROMPT);
+  } else if (state.source === 'custom'){
+    const c = ($('#customPreset').value || '').trim();
+    if (c) parts.push(c);
+  }
+
+  // 2. 生成模式附加聚焦指令
+  const extra = MODE_EXTRA[state.mode];
+  if (extra) parts.push(extra);
+
+  // 3. 文风塑造
+  if ($('#chkStyle').checked) parts.push(STYLE_PRESET);
+
+  // 4. 世界书
+  if ($('#chkWb').checked) parts.push(WORLDBOOK_PRESET);
+
+  // 5. 强制完整输出协议（永久内置，永远追加在最末，优先级最高）
+  parts.push(FULL_OUTPUT_ENFORCER);
+
+  return parts.join('\n\n' + '─'.repeat(48) + '\n\n');
+}
+
+
+/* =========================================================
+   八、配置持久化
+   ========================================================= */
+
+function saveCfg(){
+  localStorage.setItem(LS.base,   $('#baseUrl').value);
+  localStorage.setItem(LS.key,    $('#apiKey').value);
+  localStorage.setItem(LS.model,  $('#modelSelect').value);
+  localStorage.setItem(LS.temp,   $('#temperature').value);
+  localStorage.setItem(LS.max,    $('#maxTokens').value);
+  localStorage.setItem(LS.stream, $('#streamChk').value);
+  localStorage.setItem(LS.style,  $('#chkStyle').checked ? '1' : '0');
+  localStorage.setItem(LS.wb,     $('#chkWb').checked ? '1' : '0');
+  localStorage.setItem(LS.input,  $('#userInput').value);
+  localStorage.setItem(LS.source, state.source);
+  localStorage.setItem(LS.mode,   state.mode);
+  localStorage.setItem(LS.custom, $('#customPreset').value);
+}
+
+function loadCfg(){
+  $('#baseUrl').value     = localStorage.getItem(LS.base)  || 'https://api.openai.com/v1';
+  $('#apiKey').value      = localStorage.getItem(LS.key)   || '';
+  $('#temperature').value = localStorage.getItem(LS.temp)  || '0.9';
+  $('#maxTokens').value   = localStorage.getItem(LS.max)   || '8192';
+  $('#streamChk').value   = localStorage.getItem(LS.stream)|| '1';
+  $('#chkStyle').checked  = (localStorage.getItem(LS.style) ?? '1') === '1';
+  $('#chkWb').checked     = (localStorage.getItem(LS.wb)    ?? '1') === '1';
+  $('#userInput').value   = localStorage.getItem(LS.input) || '';
+  $('#customPreset').value= localStorage.getItem(LS.custom) || '';
+
+  state.source = localStorage.getItem(LS.source) || 'builtin';
+  state.mode   = localStorage.getItem(LS.mode)   || 'full';
+
+  document.querySelectorAll('.seg-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.src === state.source);
+  });
+  document.querySelectorAll('.mode-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.mode === state.mode);
+  });
+  $('#customPresetWrap').hidden = state.source !== 'custom';
+
+  try{
+    const list = JSON.parse(localStorage.getItem(LS.models) || '[]');
+    if (Array.isArray(list) && list.length){
+      const sel = $('#modelSelect');
+      sel.innerHTML = '';
+      list.forEach(id => {
+        const o = document.createElement('option');
+        o.value = id; o.textContent = id;
+        sel.appendChild(o);
+      });
+      const saved = localStorage.getItem(LS.model);
+      if (saved && list.includes(saved)) sel.value = saved;
+    }
+  }catch(_){}
+
+  if ($('#apiKey').value) setStatus('ok');
+}
+
+
+/* =========================================================
+   九、拉取模型
+   ========================================================= */
+
+async function fetchModels(){
+  const base = normalizeBase($('#baseUrl').value);
+  const key  = $('#apiKey').value.trim();
+
+  if (!base) return toast('请先填写 Base URL', 'err');
+  if (!key)  return toast('请先填写 API Key', 'err');
+
+  const btn = $('#btnFetchModels');
+  btn.disabled = true;
+  btn.textContent = '拉取中…';
+  setStatus('loading');
+
+  try{
+    const res = await fetch(base + '/models', {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok){
+      const t = await res.text().catch(() => '');
+      throw new Error('HTTP ' + res.status + (t ? ' · ' + t.slice(0, 160) : ''));
+    }
+
+    const data = await res.json();
+    const raw  = data.data || data.models || data || [];
+    const ids  = raw
+      .map(m => (typeof m === 'string' ? m : (m && (m.id || m.name))))
+      .filter(Boolean);
+
+    if (!ids.length) throw new Error('返回的模型列表为空');
+
+    ids.sort((a, b) => String(a).localeCompare(String(b)));
+
+    const sel = $('#modelSelect');
+    sel.innerHTML = '';
+    ids.forEach(id => {
+      const o = document.createElement('option');
+      o.value = id;
+      o.textContent = id;
+      sel.appendChild(o);
+    });
+
+    const saved = localStorage.getItem(LS.model);
+    if (saved && ids.includes(saved)) sel.value = saved;
+    else sel.selectedIndex = 0;
+
+    localStorage.setItem(LS.models, JSON.stringify(ids));
+    localStorage.setItem(LS.model, sel.value);
+
+    setStatus('ok', ids.length + ' 个模型');
+    toast('成功拉取 ' + ids.length + ' 个模型', 'ok');
+  }catch(e){
+    setStatus('err');
+    toast('拉取失败：' + e.message + '（请检查 Base URL / 密钥 / CORS 设置）', 'err');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = '拉取模型';
+  }
+}
+
+
+/* =========================================================
+   十、回收站
+   ========================================================= */
+
+function getTrash(){
+  try{ return JSON.parse(localStorage.getItem(LS.trash) || '[]'); }
+  catch(_){ return []; }
+}
+function setTrash(list){
+  localStorage.setItem(LS.trash, JSON.stringify(list));
+}
+function makeTitle(){
+  const t = ($('#userInput').value || '').trim().replace(/\s+/g, ' ').slice(0, 36);
+  return t || MODE_NAMES[state.mode];
+}
+function saveToTrash(content){
+  const list = getTrash();
+  const item = {
+    id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    title: makeTitle(),
+    modeName: MODE_NAMES[state.mode],
+    model: $('#modelSelect').value || '',
+    time: Date.now(),
+    chars: countChars(content),
+    content: content
+  };
+  list.unshift(item);
+  if (list.length > 60) list.length = 60;
+  setTrash(list);
+  renderTrash();
+}
+
+function renderTrash(){
+  const list = getTrash();
+  const box = $('#trashList');
+  const badge = $('#trashBadge');
+
+  badge.textContent = list.length ? String(list.length) : '';
+
+  if (!list.length){
+    box.innerHTML = '<div class="trash-empty">回收站为空</div>';
+    return;
+  }
+
+  box.innerHTML = list.map(it => `
+    <div class="trash-item" data-id="${it.id}">
+      <div class="trash-head">
+        <div class="trash-info">
+          <div class="trash-meta">
+            <span class="trash-mode">${escapeHTML(it.modeName)}</span>
+            <span class="trash-dot"></span>
+            <span>${escapeHTML(formatTime(it.time))}</span>
+            <span class="trash-dot"></span>
+            <span>${(it.chars || 0).toLocaleString()} 字</span>
+          </div>
+          <div class="trash-title">${escapeHTML(it.title)}</div>
+        </div>
+        <div class="trash-actions">
+          <button class="btn btn-ghost btn-sm" data-act="view">查看</button>
+          <button class="btn btn-ghost btn-sm" data-act="restore">恢复到工作台</button>
+          <button class="btn btn-ghost btn-sm" data-act="del">删除</button>
+        </div>
+      </div>
+      <div class="trash-body" hidden></div>
+    </div>
+  `).join('');
+}
+
+
+/* =========================================================
+   十一、生成（含继续生成）
+   ========================================================= */
+
+let controller = null;
+let lastOutput = '';
+
+function setBusy(b){
+  $('#btnGenerate').disabled = b;
+  $('#btnStop').disabled = !b;
+  $('#btnGenerate').textContent = b ? '生成中…' : '生成人设';
+  // 继续按钮：生成中禁用；有内容且空闲时启用
+  $('#btnContinue').disabled = b || !lastOutput.trim();
+}
+
+async function runGeneration(isContinue){
+  const base  = normalizeBase($('#baseUrl').value);
+  const key   = $('#apiKey').value.trim();
+  const model = $('#modelSelect').value;
+  const userText = $('#userInput').value.trim();
+
+  if (!base)  return toast('请先填写 Base URL', 'err');
+  if (!key)   return toast('请先填写 API Key', 'err');
+  if (!model) return toast('请先拉取并选择一个模型', 'err');
+  if (!userText) return toast('请先描述你想要的角色', 'err');
+
+  const sys = buildSystemPrompt();
+  const messages = [];
+  if (sys) messages.push({ role: 'system', content: sys });
+  messages.push({ role: 'user', content: userText });
+
+  // 继续生成模式：追加已输出的内容与继续指令
+  if (isContinue && lastOutput.trim()){
+    messages.push({ role: 'assistant', content: lastOutput });
+    messages.push({
+      role: 'user',
+      content: `继续。从你上次中断的位置继续输出，不要重复任何已经写过的内容，不要重新开始，不要加前言或总结。直接接着往下写。如果上一次的输出在某一段被截断，请从被截断的下一句开始。`
+    });
+  }
+
+  const useStream = $('#streamChk').value === '1';
+  const out = $('#output');
+
+  setBusy(true);
+  setStatus('loading');
+
+  // 非继续模式：清空输出。继续模式：保留旧内容，追加新内容
+  if (!isContinue){
+    lastOutput = '';
+    out.textContent = '';
+  }
+
+  controller = new AbortController();
+  let full = isContinue ? lastOutput : '';
+
+  try{
+    const res = await fetch(base + '/chat/completions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: parseFloat($('#temperature').value) || 0.9,
+        max_tokens: parseInt($('#maxTokens').value) || 8192,
+        stream: useStream
+      })
+    });
+
+    if (!res.ok){
+      const t = await res.text().catch(() => '');
+      throw new Error('HTTP ' + res.status + (t ? ' · ' + t.slice(0, 220) : ''));
+    }
+
+    if (!useStream){
+      const data = await res.json();
+      const piece = data?.choices?.[0]?.message?.content || '';
+      if (!piece) throw new Error('返回内容为空');
+      full += piece;
+      out.textContent = full;
+    }else{
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let gotAny = false;
+
+      while (true){
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const raw of lines){
+          const line = raw.trim();
+          if (!line || !line.startsWith('data:')) continue;
+          const payload = line.slice(5).trim();
+          if (payload === '[DONE]') continue;
+
+          try{
+            const j = JSON.parse(payload);
+            const delta =
+              j?.choices?.[0]?.delta?.content ??
+              j?.choices?.[0]?.message?.content ??
+              '';
+            if (delta){
+              full += delta;
+              gotAny = true;
+              out.textContent = full;
+              out.scrollTop = out.scrollHeight;
+            }
+          }catch(_){ /* 忽略半包 */ }
+        }
+      }
+      if (!gotAny && !isContinue) out.textContent = '(空回复)';
+    }
+
+    lastOutput = full;
+    updateMeta(countChars(full));
+
+    // 存入回收站（覆盖式：继续生成时替换最近一条）
+    if (full && full.trim()){
+      if (isContinue){
+        // 覆盖最近一条（同一次会话）
+        const list = getTrash();
+        if (list.length && Date.now() - list[0].time < 1000 * 60 * 30){
+          list[0].content = full;
+          list[0].chars = countChars(full);
+          list[0].time = Date.now();
+          setTrash(list);
+          renderTrash();
+        }else{
+          saveToTrash(full);
+        }
+      }else{
+        saveToTrash(full);
+      }
+    }
+
+    setStatus('ok', '已连接');
+    toast(isContinue ? '已继续生成' : '生成完成 · 已存入回收站', 'ok');
+  }catch(e){
+    if (e.name === 'AbortError'){
+      setStatus('ok', '已连接');
+      toast('已停止生成', 'err');
+      if (!full) out.innerHTML = '<span class="placeholder">已停止生成。</span>';
+      lastOutput = full;
+      updateMeta(countChars(full));
+      if (full.trim()) saveToTrash(full);
+    }else{
+      setStatus('err');
+      toast('请求失败：' + e.message, 'err');
+      out.textContent = full || ('请求失败：' + e.message);
+      lastOutput = full;
+      updateMeta(countChars(full));
+    }
+  }finally{
+    setBusy(false);
+    controller = null;
+  }
+}
+
+
+/* =========================================================
+   十二、Tab 切换
+   ========================================================= */
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  $('#panelWork').hidden = name !== 'work';
+  $('#panelTrash').hidden = name !== 'trash';
+  if (name === 'trash') renderTrash();
+}
+
+
+/* =========================================================
+   十三、事件绑定
+   ========================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  loadCfg();
+  renderTrash();
+  updateMeta(0);
+
+  // 配置变更保存
+  ['baseUrl','apiKey','temperature','maxTokens','streamChk'].forEach(id => {
+    $('#' + id).addEventListener('change', saveCfg);
+  });
+  $('#modelSelect').addEventListener('change', saveCfg);
+  $('#userInput').addEventListener('input', saveCfg);
+  $('#customPreset').addEventListener('input', saveCfg);
+
+  // Tab
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => switchTab(t.dataset.tab));
+  });
+
+  // 生成模式
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      state.mode = card.dataset.mode;
+      updateMeta(countChars(lastOutput));
+      saveCfg();
+    });
+  });
+
+  // 指令源
+  document.querySelectorAll('.seg-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.seg-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.source = btn.dataset.src;
+      $('#customPresetWrap').hidden = state.source !== 'custom';
+      saveCfg();
+    });
+  });
+
+  $('#chkStyle').addEventListener('change', saveCfg);
+  $('#chkWb').addEventListener('change', saveCfg);
+
+  $('#btnFetchModels').addEventListener('click', fetchModels);
+
+  // 生成 / 继续 / 停止
+  $('#btnGenerate').addEventListener('click', () => runGeneration(false));
+  $('#btnContinue').addEventListener('click', () => {
+    if (!lastOutput.trim()) return toast('暂无可继续的内容', 'err');
+    runGeneration(true);
+  });
+  $('#btnStop').addEventListener('click', () => {
+    if (controller) controller.abort();
+  });
+
+  // 复制
+  $('#btnCopy').addEventListener('click', async () => {
+    const text = $('#output').innerText.trim();
+    if (!text || text === '尚未生成内容。') return toast('暂无可复制内容', 'err');
+    try{
+      await navigator.clipboard.writeText(text);
+      toast('已复制到剪贴板', 'ok');
+    }catch(_){
+      toast('复制失败，请手动选择文本', 'err');
+    }
+  });
+
+  // 下载
+  $('#btnDownload').addEventListener('click', () => {
+    const text = $('#output').innerText.trim();
+    if (!text || text === '尚未生成内容。') return toast('暂无可下载内容', 'err');
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'character-profile-' + Date.now() + '.md';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+    toast('已下载 .md 文件', 'ok');
+  });
+
+  // 清除配置
+  $('#btnClearCfg').addEventListener('click', () => {
+    if (!confirm('将清除 API 配置、预设、输入与回收站，是否继续？')) return;
+    Object.values(LS).forEach(k => localStorage.removeItem(k));
+    $('#apiKey').value = '';
+    $('#baseUrl').value = 'https://api.openai.com/v1';
+    $('#customPreset').value = '';
+    $('#userInput').value = '';
+    $('#modelSelect').innerHTML = '<option value="">— 请先拉取模型 —</option>';
+    state.source = 'builtin';
+    state.mode = 'full';
+    lastOutput = '';
+    $('#output').innerHTML = '<span class="placeholder">尚未生成内容。</span>';
+    updateMeta(0);
+    document.querySelectorAll('.seg-item').forEach(b => b.classList.toggle('active', b.dataset.src === 'builtin'));
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('active', c.dataset.mode === 'full'));
+    $('#customPresetWrap').hidden = true;
+    setStatus('');
+    renderTrash();
+    setBusy(false);
+    toast('本地配置已清除', 'ok');
+  });
+
+  // 回收站清空
+  $('#btnClearTrash').addEventListener('click', () => {
+    if (!getTrash().length) return toast('回收站已是空的', 'err');
+    if (!confirm('确定清空回收站？此操作不可恢复。')) return;
+    setTrash([]);
+    renderTrash();
+    toast('回收站已清空', 'ok');
+  });
+
+  // 回收站事件委托
+  $('#trashList').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const item = btn.closest('.trash-item');
+    const id = item.dataset.id;
+    const act = btn.dataset.act;
+    const list = getTrash();
+    const rec = list.find(x => x.id === id);
+
+    if (act === 'view'){
+      const body = item.querySelector('.trash-body');
+      if (!rec) return;
+      if (body.hidden){
+        body.textContent = rec.content;
+        body.hidden = false;
+        btn.textContent = '收起';
+      }else{
+        body.hidden = true;
+        btn.textContent = '查看';
+      }
+    } else if (act === 'restore'){
+      if (!rec) return;
+      $('#output').textContent = rec.content;
+      lastOutput = rec.content;
+      updateMeta(countChars(lastOutput));
+      setBusy(false);
+      switchTab('work');
+      toast('已恢复到工作台', 'ok');
+    } else if (act === 'del'){
+      if (!rec) return;
+      if (!confirm('确定删除这条记录？')) return;
+      setTrash(list.filter(x => x.id !== id));
+      renderTrash();
+      toast('已删除', 'ok');
+    }
+  });
+
+  // 快捷键 Ctrl / Cmd + Enter
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+      if (!$('#btnGenerate').disabled) runGeneration(false);
+    }
+  });
+});
+</script>
+</body>
+</html>
