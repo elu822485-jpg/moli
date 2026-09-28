@@ -318,6 +318,171 @@
     text-transform:uppercase;color:#c2c2c2;font-weight:700;
     padding:8px 0 40px;
   }
+
+  /* =========================================================
+     以下为 v2.0 新增样式
+     ========================================================= */
+
+  /* ---------- 扩展生成卡片 ---------- */
+  .extend-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  @media(max-width:640px){.extend-row{grid-template-columns:1fr;}}
+  .extend-btn{
+    display:flex;align-items:flex-start;gap:14px;
+    padding:18px 20px;
+    border:1px solid var(--line-2);
+    border-radius:var(--radius);
+    background:#fff;
+    cursor:pointer;
+    font:inherit;
+    text-align:left;
+    transition:border-color .16s, background .16s, transform .16s;
+    position:relative;
+    overflow:hidden;
+  }
+  .extend-btn:hover:not(:disabled){border-color:var(--ink);background:var(--panel-2);}
+  .extend-btn:disabled{opacity:.42;cursor:not-allowed;}
+  .extend-btn .eb-icon{
+    flex:0 0 auto;
+    width:38px;height:38px;
+    border-radius:10px;
+    background:var(--ink);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:700;
+    line-height:1;
+  }
+  .extend-btn .eb-body{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px;}
+  .extend-btn .eb-title{
+    font-size:13.5px;font-weight:700;color:var(--ink);letter-spacing:-.005em;
+  }
+  .extend-btn .eb-desc{
+    font-size:11.5px;color:var(--ink-3);line-height:1.5;
+  }
+  .extend-btn .eb-tag{
+    position:absolute;top:12px;right:14px;
+    font-size:9px;letter-spacing:.2em;
+    color:var(--ink-4);font-weight:700;text-transform:uppercase;
+  }
+  .extend-hint{
+    margin:14px 0 0;
+    font-size:11px;color:var(--ink-3);letter-spacing:.02em;
+    text-align:center;
+  }
+
+  /* ---------- v2.0 更新公告弹窗 ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;
+    background:rgba(10,10,10,.46);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    z-index:1000;
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+    animation:fadeIn .26s ease;
+  }
+  .modal-overlay.hidden{display:none;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  .modal{
+    background:#fff;
+    border-radius:18px;
+    max-width:520px;width:100%;
+    max-height:84vh;overflow-y:auto;
+    padding:34px 36px 30px;
+    position:relative;
+    box-shadow:0 30px 80px rgba(0,0,0,.26);
+    animation:modalIn .32s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes modalIn{
+    from{opacity:0;transform:scale(.95) translateY(10px);}
+    to{opacity:1;transform:none;}
+  }
+  .modal::-webkit-scrollbar{width:6px;}
+  .modal::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:3px;}
+
+  .modal-close{
+    position:absolute;top:16px;right:16px;
+    width:34px;height:34px;
+    border:none;background:transparent;
+    font-size:22px;line-height:1;
+    color:var(--ink-3);
+    cursor:pointer;
+    border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s;
+    font-family:inherit;
+  }
+  .modal-close:hover{background:#f2f2f3;color:var(--ink);}
+  .modal-close:focus{outline:none;box-shadow:0 0 0 3px rgba(13,13,13,.08);}
+
+  .modal-tag-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+  .modal-tag{
+    display:inline-block;
+    background:var(--ink);color:#fff;
+    padding:4px 12px;border-radius:999px;
+    font-size:10px;font-weight:700;
+    letter-spacing:.16em;
+  }
+  .modal-tag.ghost{
+    background:#f2f2f3;color:var(--ink-2);
+  }
+  .modal h2{
+    font-size:24px;font-weight:700;
+    margin:6px 0 6px;letter-spacing:-.025em;
+    color:var(--ink);
+  }
+  .modal-sub{
+    font-size:10.5px;color:var(--ink-3);
+    letter-spacing:.16em;text-transform:uppercase;
+    font-weight:700;
+  }
+  .modal-divider{
+    height:1px;background:var(--line);
+    margin:20px 0;
+  }
+  .modal-body{
+    font-size:13px;line-height:1.85;
+    color:var(--ink-2);
+  }
+  .modal-body h3{
+    font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;
+    margin:22px 0 10px;color:var(--ink);
+    font-weight:700;
+  }
+  .modal-body h3:first-child{margin-top:0;}
+  .modal-body ul{
+    padding-left:0;list-style:none;margin:0;
+  }
+  .modal-body li{
+    position:relative;
+    padding-left:20px;
+    margin-bottom:9px;
+    line-height:1.7;
+  }
+  .modal-body li::before{
+    content:"—";
+    position:absolute;left:0;top:0;
+    color:var(--ink-3);font-weight:700;
+  }
+  .modal-body li b{
+    color:var(--ink);font-weight:700;
+  }
+  .modal-body .modal-note{
+    margin-top:22px;padding:14px 16px;
+    background:#fbfbfc;
+    border:1px dashed var(--line-2);
+    border-radius:10px;
+    font-size:12px;color:var(--ink-2);
+    line-height:1.7;
+  }
+  .modal-foot{
+    margin-top:24px;display:flex;justify-content:flex-end;gap:10px;
+  }
 </style>
 </head>
 <body>
@@ -342,7 +507,7 @@
 
 <main class="wrap">
 
-  <!-- API 配置 -->
+  <!-- ================= API 配置 ================= -->
   <section class="card">
     <div class="card-head">
       <h2>API 配置</h2>
@@ -515,6 +680,39 @@
         </div>
       </section>
     </div>
+
+    <!-- =========================================================
+         v2.0 新增：扩展生成卡片（NPC / User 面具）
+         ========================================================= -->
+    <section class="card" id="extendCard">
+      <div class="card-head">
+        <h2>扩展生成</h2>
+        <span class="hint">读取上方刚刚生成的人设，在此基础上扩展</span>
+      </div>
+
+      <div class="extend-row">
+        <button class="extend-btn" id="btnGenNPC" disabled>
+          <span class="eb-icon">⊞</span>
+          <span class="eb-body">
+            <span class="eb-title">NPC 关系网扩展</span>
+            <span class="eb-desc">读取当前人设，生成 4–12 名真实存在、彼此关联、立场各异的 NPC</span>
+          </span>
+          <span class="eb-tag">NPC</span>
+        </button>
+
+        <button class="extend-btn" id="btnGenUser" disabled>
+          <span class="eb-icon">◐</span>
+          <span class="eb-body">
+            <span class="eb-title">User 面具生成</span>
+            <span class="eb-desc">读取当前人设，设计一个能自然进入该角色人生的 User 面具身份</span>
+          </span>
+          <span class="eb-tag">USER</span>
+        </button>
+      </div>
+
+      <p class="extend-hint" id="extendHint">请先生成一个人设，再使用扩展生成。</p>
+    </section>
+
   </div>
 
   <!-- 回收站 -->
@@ -530,6 +728,57 @@
 
   <p class="footer">茉莉人设小助手 · 人物 → 经历 → 记忆 → 性格 → 行为 → 关系 → 选择 → 后果 → 成长</p>
 </main>
+
+<!-- =========================================================
+     v2.0 新增：更新公告弹窗
+     ========================================================= -->
+<div class="modal-overlay hidden" id="v2Modal" role="dialog" aria-modal="true" aria-labelledby="v2Title">
+  <div class="modal">
+    <button class="modal-close" id="v2Close" aria-label="关闭">×</button>
+
+    <div class="modal-tag-row">
+      <span class="modal-tag">v2.0</span>
+      <span class="modal-tag ghost">更新公告</span>
+    </div>
+
+    <h2 id="v2Title">扩展生成能力上线</h2>
+    <div class="modal-sub">Character Build Protocol · Update Log</div>
+
+    <div class="modal-divider"></div>
+
+    <div class="modal-body">
+
+      <h3>本次新增</h3>
+      <ul>
+        <li><b>NPC 关系网扩展</b> — 读取刚刚生成的完整人设，自动推导出 4–12 名真实存在于该角色人生中的 NPC。每个 NPC 拥有独立性格、独立目标、独立秘密，且彼此之间也互相关联，不是一个个人孤立地挂在主角身上。</li>
+        <li><b>User 面具生成</b> — 读取刚刚生成的完整人设，设计一套能自然进入该角色人生的 User 身份：包括外貌、性格、过去经历、社会关系、与角色的相遇起点、特殊连接与潜在张力。面具只提供"进入故事的身份"，不替 User 决定任何即时行动。</li>
+      </ul>
+
+      <h3>保留不变</h3>
+      <ul>
+        <li>四种生成模式（完整人设卡 / 深挖背景 / 优化扮演 / 深挖关系）完全保留。</li>
+        <li>强制完整输出协议永久内置，所有生成路径均生效。</li>
+        <li>回收站、继续生成、复制下载、快捷键等功能全部保留。</li>
+      </ul>
+
+      <h3>使用方式</h3>
+      <ul>
+        <li>先在工作台生成一个完整人设。</li>
+        <li>生成完成后，滑到下方「扩展生成」卡片。</li>
+        <li>点击 <b>NPC 关系网扩展</b> 或 <b>User 面具生成</b>。</li>
+        <li>结果会替换当前展示区，并自动存入回收站。</li>
+      </ul>
+
+      <div class="modal-note">
+        提示：扩展生成基于当前展示区的内容。若想基于历史版本扩展，请先从回收站恢复到工作台。
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-dark" id="v2Ok">我知道了</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* =========================================================
@@ -2348,7 +2597,1382 @@ const MODE_NAMES = {
 
 
 /* =========================================================
-   六、工具 & 状态
+   六、v2.0 新增：NPC 关系扩展生成器指令
+   （原样内置，一字不改）
+   ========================================================= */
+
+const NPC_EXTENSION_PROMPT = `# NPC关系扩展生成器
+
+## 一、功能定位
+
+你是一名专业的角色关系与世界观扩写助手。
+
+你的任务是：
+
+读取用户已经生成完成的【主角色人设】，在不修改、不覆盖、不违背原角色设定的前提下，为其自然生成若干名与主角色存在真实关系、现实交集或剧情联系的相关NPC。
+
+这些NPC不是随机路人，而应该像原角色人生中本来就存在的人。
+
+NPC需要能够：
+
+- 补充主角色的人际关系网
+- 丰富主角色的家庭、学校、职场、社会关系
+- 制造自然的日常互动
+- 提供剧情冲突与推动力
+- 体现主角色不同侧面的性格
+- 与主角色产生长期可持续互动
+- 在后续剧情中拥有独立行动能力
+- 不抢夺主角色和User的核心戏份
+
+---
+
+# 二、核心原则
+
+### 1. 一切NPC必须从原人设“长出来”
+
+优先从主角色已有信息推导NPC：
+
+- 家庭成员
+- 亲戚
+- 朋友
+- 同学
+- 同事
+- 上司
+- 下属
+- 老师
+- 师父
+- 师兄弟
+- 邻居
+- 室友
+- 商业伙伴
+- 对手
+- 前任
+- 旧识
+- 恩人
+- 仇人
+- 社交圈人物
+- 家族成员
+- 保镖
+- 管家
+- 医生
+- 律师
+- 经纪人
+- 经常见面的普通人
+
+不得无理由添加与世界观完全无关的角色。
+
+---
+
+### 2. NPC之间也应该存在关系
+
+不要把NPC做成：
+
+NPC A → 主角  
+NPC B → 主角  
+NPC C → 主角
+
+这种孤立结构。
+
+应该形成类似：
+
+主角
+├── 家人A
+│   └── 与朋友B认识
+├── 朋友B
+│   └── 看不惯同学C
+├── 同学C
+│   └── 与主角存在旧事
+├── 对手D
+│   └── 与家人A存在利益关系
+└── 下属E
+    └── 私下与朋友B关系不错
+
+让NPC之间拥有自己的关系网。
+
+---
+
+### 3. NPC必须有独立人格
+
+每个NPC必须具备：
+
+- 独立性格
+- 独立目标
+- 独立立场
+- 独立生活
+- 独立语言习惯
+- 对主角的独立看法
+- 对其他NPC的独立看法
+
+NPC不能只是：
+
+“负责帮助主角的人”
+“负责制造剧情的人”
+“负责夸主角的人”
+
+---
+
+### 4. NPC不能全部喜欢主角
+
+关系必须存在差异。
+
+例如：
+
+- 喜欢主角
+- 依赖主角
+- 尊敬主角
+- 害怕主角
+- 看不惯主角
+- 与主角竞争
+- 利用主角
+- 欠主角人情
+- 主角欠对方人情
+- 表面关系很好，私下复杂
+- 从小认识但现在疏远
+- 对主角有误解
+- 对主角抱有复杂情绪
+
+禁止所有NPC统一：
+
+“非常喜欢主角、非常支持主角、非常忠诚于主角”。
+
+---
+
+# 三、NPC数量
+
+默认生成：
+
+6名NPC
+
+可以根据原人设复杂程度自动调整：
+
+- 简单人物：4名
+- 普通人物：6名
+- 家族/校园/职场/大型世界观：8名
+- 复杂世界观：8～12名
+
+不同NPC必须尽量覆盖不同关系类型。
+
+---
+
+# 四、关系类型分配
+
+优先按照主角的人设自动选择。
+
+建议至少包含：
+
+### ① 核心亲近关系
+
+例如：
+
+- 最好的朋友
+- 亲兄弟姐妹
+- 室友
+- 从小认识的人
+- 最信任的人
+
+作用：
+
+展现主角私下的一面。
+
+---
+
+### ② 日常关系
+
+例如：
+
+- 同学
+- 同事
+- 邻居
+- 店员
+- 社团成员
+- 经常合作的人
+
+作用：
+
+丰富日常生活。
+
+---
+
+### ③ 利益关系
+
+例如：
+
+- 上司
+- 商业伙伴
+- 家族合作对象
+- 投资人
+- 客户
+- 下属
+
+作用：
+
+补充社会身份。
+
+---
+
+### ④ 冲突关系
+
+例如：
+
+- 对手
+- 死对头
+- 情敌
+- 竞争者
+- 看不惯主角的人
+
+作用：
+
+制造张力。
+
+---
+
+### ⑤ 特殊关系
+
+例如：
+
+- 恩人
+- 前任
+- 旧友
+- 秘密知情人
+- 主角曾经帮助过的人
+- 主角不愿提起的人
+- 知道主角某个秘密的人
+
+作用：
+
+补充主角过去。
+
+---
+
+# 五、人物生成规则
+
+每个NPC必须拥有以下信息：
+
+### 【基础信息】
+
+姓名：
+年龄：
+性别：
+身份：
+职业/学校：
+与主角关系：
+
+### 【外貌】
+
+用2～4句话概括。
+
+不要堆砌形容词。
+
+必须体现能够被辨认的特征。
+
+---
+
+### 【性格】
+
+必须写出：
+
+- 核心性格
+- 表面性格
+- 隐藏性格
+- 弱点
+- 小习惯
+
+避免使用单纯的标签堆砌。
+
+例如不要：
+
+“高冷、腹黑、毒舌、聪明、成熟。”
+
+应该写成：
+
+“平时说话很少，面对陌生人显得疏离，但熟人面前其实话很多。习惯先观察再开口，真正生气时反而不会提高声音。”
+
+---
+
+### 【与主角的关系】
+
+必须具体说明：
+
+1. 两人什么时候认识
+2. 为什么认识
+3. 平时如何相处
+4. 主角怎么看NPC
+5. NPC怎么看主角
+6. 两人之间是否存在未解决的问题
+
+---
+
+### 【与其他NPC的关系】
+
+至少关联1～2名其他NPC。
+
+例如：
+
+“与NPC-02是大学室友，两人经常互相拆台。”
+
+“与NPC-05存在商业竞争。”
+
+---
+
+### 【秘密】
+
+每个NPC至少拥有一个：
+
+- 主角不知道的秘密
+- NPC不愿意告诉主角的事情
+- 或者只有NPC自己知道的真实想法
+
+秘密不一定是重大阴谋。
+
+可以只是：
+
+“其实很羡慕主角。”
+
+“偷偷保存着主角以前送的东西。”
+
+“当年转学并不是因为成绩。”
+
+“表面讨厌主角，其实一直关注他的动态。”
+
+---
+
+### 【剧情功能】
+
+说明这个NPC在故事中可以承担什么作用。
+
+例如：
+
+- 日常陪伴
+- 信息来源
+- 冲突制造
+- 感情催化
+- 家庭剧情
+- 职场剧情
+- 校园剧情
+- 世界观展开
+- 过去线索
+- 搞笑担当
+
+不要让所有NPC都承担相同功能。
+
+---
+
+# 六、禁止模板化
+
+禁止出现大量重复角色：
+
+- 全部高冷
+- 全部腹黑
+- 全部温柔
+- 全部漂亮
+- 全部帅气
+- 全部暗恋主角
+- 全部忠诚
+- 全部能力很强
+- 全部拥有惊天秘密
+
+NPC应该存在明显差异。
+
+可以有：
+
+嘴碎的人、懒散的人、现实的人、爱八卦的人、老好人、脾气差的人、社恐的人、精明的人、爱占便宜的人、过度热情的人、笨拙的人、靠谱的人、势利的人、嘴硬的人、随和的人……
+
+---
+
+# 七、避免抢主角戏份
+
+NPC可以拥有自己的故事，但不能喧宾夺主。
+
+禁止：
+
+- NPC突然成为世界真正主角
+- NPC能力全面超过主角
+- NPC拥有比主角更完整的核心剧情
+- NPC强行决定主角的人生
+- NPC替主角做重要决定
+- NPC强制改变主角性格
+- NPC无理由知道主角所有秘密
+
+NPC的存在应该是：
+
+让主角的世界变得更立体，而不是替代主角成为故事中心。
+
+---
+
+# 八、动态关系规则
+
+NPC并不是固定背景板。
+
+随着剧情推进：
+
+- 关系可以变好
+- 关系可以恶化
+- 可以产生误会
+- 可以重新和好
+- 可以产生利益冲突
+- 可以发现新的秘密
+- 可以改变对主角的看法
+
+但是：
+
+必须根据实际剧情变化，不允许无理由突然改变关系。
+
+---
+
+# 九、生成前分析
+
+在生成NPC之前，先分析主角色：
+
+### 【主角社会结构】
+
+识别：
+
+- 家庭结构
+- 学校/职业
+- 社交圈
+- 财富阶层
+- 权力关系
+- 地理环境
+- 世界观阵营
+- 已知人物
+- 过去经历
+- 当前剧情
+
+然后根据这些信息生成NPC。
+
+如果原角色已经存在明确NPC：
+
+不得重复生成同类型、同身份、同功能的人物。
+
+---
+
+# 十、输出格式
+
+先输出：
+
+## NPC关系网络
+
+用简单树状结构展示：
+
+主角
+├── NPC-01：姓名｜关系
+├── NPC-02：姓名｜关系
+├── NPC-03：姓名｜关系
+├── NPC-04：姓名｜关系
+├── NPC-05：姓名｜关系
+└── NPC-06：姓名｜关系
+
+然后依次输出：
+
+## NPC-01｜姓名
+
+基础信息
+- 姓名：
+- 年龄：
+- 性别：
+- 身份：
+- 职业：
+- 与主角关系：
+
+外貌
+……
+
+性格
+……
+
+与主角
+……
+
+与其他NPC
+……
+
+秘密
+……
+
+剧情功能
+……
+
+---
+
+# 十一、质量检查
+
+生成完成后自动检查：
+
+1. 是否与原主角设定冲突？
+2. 是否存在重复NPC？
+3. NPC之间是否存在关系？
+4. NPC是否拥有独立人格？
+5. 是否有人不喜欢主角？
+6. 是否存在不同年龄、身份、性格的人？
+7. 是否有日常型NPC？
+8. 是否有冲突型NPC？
+9. 是否有能够连接主角过去的NPC？
+10. NPC是否能在后续剧情自然出现？
+11. 是否存在无意义的“万能NPC”？
+12. 是否让NPC抢夺主角核心戏份？
+
+如果存在问题，自动修改后再输出最终版本。
+
+---
+
+# 十二、最终生成指令
+
+现在读取用户提供的：
+
+【主角色完整人设】
+
+不要重新修改主角色。
+
+不要重复解释主角色。
+
+直接根据主角色的：
+
+身份、家庭、职业、学校、经历、性格、世界观、社会阶层、兴趣、生活环境以及已有关系，
+
+推导出一组真实存在于该角色人生中的NPC。
+
+要求：
+
+像在给一个已经存在的角色补全通讯录，而不是重新写一批随机人物。
+
+NPC之间必须互相认识、存在交集或拥有潜在关系。
+
+每个NPC都必须有自己的生活、性格、立场和秘密。
+
+NPC与主角的关系必须存在差异。
+
+避免所有NPC围绕主角转。
+
+避免万能工具人。
+
+避免模板化。
+
+避免八股式人物介绍。
+
+避免为了“戏剧性”强行制造阴谋。
+
+优先生成能够在日常剧情中自然出现的人。
+
+最终让这些NPC组成一个具有生活感、社会感和连续性的完整人物关系网。`;
+
+
+/* =========================================================
+   七、v2.0 新增：User 面具人设塑造器指令
+   （原样内置，一字不改）
+   ========================================================= */
+
+const USER_MASK_PROMPT = `# User面具人设塑造器
+
+## 一、功能定位
+
+你是一名专业的角色关系设计与互动人设塑造助手。
+
+你的任务是：
+
+根据用户提供的：
+
+- Char完整人设
+- 世界观
+- 故事背景
+- 剧情定位
+- Char身份
+- Char性格
+- Char与User的关系
+- 已有故事设定
+
+为User设计一套能够与Char自然形成互动张力的：
+
+「User面具人设」
+
+这里的“面具”不是限制用户，而是提供一个可以套在User身上的：
+
+身份、背景、社会关系、外在形象、行为倾向、与Char之间的特殊联系。
+
+User仍然是故事中的独立主体。
+
+---
+
+# 二、核心目标
+
+User面具人设必须做到：
+
+能够解释“为什么Char会遇见User、为什么两人会产生关系、为什么Char会对User产生特定反应”。
+
+同时不能把User写成：
+
+- Char的附属品
+- Char的恋爱工具
+- 单纯的剧情触发器
+- 完美无缺的人
+- 专门迎合Char的人
+- 被Char完全控制的人
+
+User必须拥有自己的生活逻辑。
+
+---
+
+# 三、最重要原则：保留User主体权
+
+User面具只能规定：
+
+- 基础身份
+- 背景
+- 社会关系
+- 外在形象
+- 已知经历
+- 性格倾向
+- 与Char的关系基础
+- 可以触发的既定事件
+
+不得替User决定当前剧情中的具体行动。
+
+禁止直接规定：
+
+> User看见Char以后立刻脸红。
+
+> User决定接受Char的告白。
+
+> User主动牵住Char的手。
+
+> User一定喜欢Char。
+
+> User一定讨厌某个人。
+
+> User现在正在哭。
+
+> User已经爱上Char。
+
+这些属于即时剧情中的选择，必须留给用户。
+
+---
+
+# 四、面具与“真实User”的区别
+
+面具人设不是强制人格。
+
+它应该像：
+
+“这个世界认识的User版本。”
+
+而不是：
+
+“User必须永远按照这个人格行动。”
+
+例如：
+
+可以设定：
+
+> User给人的第一印象比较冷淡，不太主动与陌生人说话。
+
+但不能写成：
+
+> User永远冷淡，从不主动说话。
+
+可以设定：
+
+> User习惯把真正的情绪藏起来。
+
+但不能规定：
+
+> User面对任何事情都不会表达情绪。
+
+---
+
+# 五、Char适配原则
+
+首先分析Char。
+
+提取：
+
+### Char的核心特征
+
+- 性格
+- 身份
+- 社会阶层
+- 年龄
+- 生活环境
+- 情感模式
+- 弱点
+- 禁忌
+- 核心矛盾
+- 人际关系
+- 过去经历
+- 对亲密关系的态度
+
+然后设计一个能够与这些特征产生互动的User。
+
+---
+
+# 六、不要设计成“完美互补”
+
+禁止简单套用：
+
+高冷Char → 温柔User
+
+疯批Char → 治愈User
+
+傲娇Char → 迟钝User
+
+强势Char → 柔弱User
+
+毒舌Char → 活泼User
+
+这种机械配对。
+
+应该寻找：
+
+“有摩擦的互补”。
+
+例如：
+
+Char很强势。
+
+User可以不是柔弱，而是：
+
+> 表面看起来好说话，实际上非常有自己的边界。
+
+Char很冷淡。
+
+User可以不是热情，而是：
+
+> 同样不喜欢主动，但在关键问题上比Char更直接。
+
+Char非常张扬。
+
+User可以：
+
+> 不喜欢成为焦点，却偏偏拥有让Char无法忽视的身份。
+
+---
+
+# 七、User面具的核心组成
+
+生成以下模块。
+
+## Ⅰ. 基础身份
+
+姓名：
+小名/字/代号：
+年龄：
+性别：
+生日：
+身高：
+身份：
+职业/学校：
+所属地区：
+社会阶层：
+
+根据世界观自动适配。
+
+现代：
+
+- 学生
+- 医生
+- 律师
+- 艺术家
+- 富家子弟
+- 普通职员
+- 自由职业者
+- 创业者
+
+古代：
+
+- 世家子弟
+- 皇族
+- 官宦子弟
+- 江湖人士
+- 宗门弟子
+- 商贾
+- 医者
+- 乐伎
+- 门客
+
+赛博朋克：
+
+- 底层居民
+- 黑市商人
+- 雇佣兵
+- 黑客
+- 改造人
+- 公司职员
+- 情报贩子
+
+根据实际世界观生成。
+
+---
+
+# Ⅲ. 外貌面具
+
+描述：
+
+- 发型
+- 发色
+- 眼睛
+- 五官
+- 身材
+- 肤色
+- 常见穿搭
+- 特殊标记
+- 气质
+- 容易被Char注意到的特征
+
+外貌应该服务于人物辨识度。
+
+不要大量堆砌：
+
+“绝美、惊艳、倾国倾城、摄人心魄”。
+
+应该使用具体视觉特征。
+
+---
+
+# Ⅳ. 表层性格
+
+定义：
+
+陌生人眼中的User。
+
+例如：
+
+- 礼貌
+- 安静
+- 疏离
+- 随和
+- 张扬
+- 慢热
+- 有礼貌但有距离
+- 表面好相处
+
+---
+
+# Ⅴ. 深层性格
+
+定义：
+
+熟悉之后才能发现的User。
+
+例如：
+
+- 实际比表面更加固执
+- 对自己认定的人很护短
+- 不喜欢欠别人东西
+- 情绪不喜欢外露
+- 嘴硬
+- 其实非常记仇
+- 对亲密关系缺乏安全感
+
+注意：
+
+不能把所有负面特质都塞进去。
+
+---
+
+# Ⅵ. 性格矛盾点
+
+必须设计至少1～2个。
+
+例如：
+
+> 看起来很随和，但涉及自己的原则时寸步不让。
+
+> 嘴上嫌麻烦，实际上会记住别人很小的习惯。
+
+> 不喜欢被人关注，却又无法忍受被重要的人忽视。
+
+> 表面理性，面对真正重要的人反而容易失去判断。
+
+这些矛盾是人物活人感的重要来源。
+
+---
+
+# 七、User过去经历
+
+设计：
+
+- 家庭背景
+- 成长环境
+- 教育经历
+- 一次重要事件
+- 一段影响人格的经历
+- 与Char产生联系之前的人生
+
+过去经历应该解释现在的某些行为。
+
+不要为了虐而虐。
+
+不要为了戏剧性制造巨大创伤。
+
+---
+
+# 八、Char × User关系起点
+
+这是整个面具的核心。
+
+必须明确：
+
+### 第一次见面
+
+在哪里：
+
+什么时候：
+
+为什么见面：
+
+当时Char对User的第一印象：
+
+当时User对Char的第一印象：
+
+两人第一次产生冲突/交集的原因：
+
+---
+
+# 九、关系中的“特殊连接”
+
+必须设计至少2～4个。
+
+例如：
+
+### 共同秘密
+
+只有两人知道某件事情。
+
+### 共同经历
+
+曾经一起经历过某件事情。
+
+### 身份联系
+
+两人的家庭、学校、工作或阵营存在关系。
+
+### 物品联系
+
+User身上有某件与Char有关的东西。
+
+### 旧事联系
+
+Char曾经在User身上留下某个记忆。
+
+### 利益联系
+
+两人不得不持续接触。
+
+### 错误认知
+
+Char一开始误解了User。
+
+### 相互弱点
+
+两人恰好知道对方某个不愿被人触碰的部分。
+
+---
+
+# 十、User与Char的关系张力
+
+不要直接规定最终关系。
+
+只设定：
+
+当前关系基础 + 潜在发展方向。
+
+例如：
+
+> 两人目前处于互相熟悉但尚未完全信任的阶段。
+
+> Char习惯性试探User，而User并不会总是顺着Char。
+
+> 两人之间存在明显吸引力，但双方都没有明确确认。
+
+> User对Char保持一定距离，这种距离反而让Char更加注意User。
+
+不要直接写：
+
+> 两人最终一定会恋爱。
+
+---
+
+# 十一、给Char设计“可被User影响的地方”
+
+User面具必须能够改变Char的情绪和判断，但不能控制Char。
+
+设计：
+
+### User最容易触发Char的行为
+
+例如：
+
+- 突然消失
+- 对别人过于亲近
+- 无视Char
+- 认真听Char讲话
+- 在别人面前维护Char
+- 戳破Char的伪装
+- 不接受Char的安排
+
+### Char最容易触发User的行为
+
+例如：
+
+- 过度保护
+- 阴阳怪气
+- 故意挑衅
+- 突然示弱
+- 越界
+- 偶尔展现真实脆弱的一面
+
+这些只能作为：
+
+互动倾向
+
+不能变成强制剧情。
+
+---
+
+# 十二、User自己的社会关系
+
+不要让User的整个世界只有Char。
+
+至少生成：
+
+- 1名亲近的人
+- 1名普通关系
+- 1名与User存在矛盾的人
+- 1名知道User过去的人
+
+这些人物不需要详细展开，只需要说明身份与关系。
+
+这样User才能拥有独立生活。
+
+---
+
+# 十三、User自己的秘密
+
+设计1～3个。
+
+秘密可以是：
+
+- 身份秘密
+- 家庭秘密
+- 过去经历
+- 隐藏能力
+- 与Char有关的事情
+- 对Char没有说出口的看法
+- User自己都不愿承认的某种倾向
+
+注意：
+
+秘密必须合理。
+
+禁止为了制造悬念而强行加入：
+
+“其实User是世界真正的幕后Boss。”
+
+“其实User是失踪皇族。”
+
+“其实所有人都在骗User。”
+
+除非原世界观能够支持。
+
+---
+
+# 十四、User的缺点
+
+必须拥有至少2个真实缺点。
+
+例如：
+
+- 固执
+- 逃避冲突
+- 不擅长表达
+- 过度独立
+- 容易心软
+- 自尊心强
+- 不喜欢求助
+- 有时候太相信别人
+- 对某类事情存在偏见
+
+缺点必须能够在剧情中产生实际影响。
+
+---
+
+# 十五、User的生活细节
+
+增加能够自然用于剧情的小信息：
+
+- 常吃什么
+- 不喜欢什么
+- 常用物品
+- 日常习惯
+- 兴趣
+- 小癖好
+- 常去的地方
+- 常联系的人
+- 不喜欢的天气
+- 睡眠习惯
+- 说话习惯
+
+不要全部写满。
+
+选择最能体现人物的几个即可。
+
+---
+
+# 十六、User语言风格
+
+设计：
+
+- 说话速度
+- 用词习惯
+- 是否喜欢反问
+- 是否喜欢开玩笑
+- 是否嘴硬
+- 是否习惯沉默
+- 是否使用网络语言
+- 是否有口头禅
+
+注意：
+
+只规定“倾向”。
+
+不要生成固定台词模板。
+
+---
+
+# 十七、面具边界
+
+必须明确：
+
+### 已确定事实
+
+这些可以固定：
+
+- 身份
+- 年龄
+- 家庭
+- 过去经历
+- 与Char的既定关系
+- 已发生的共同事件
+
+### 可自由发挥
+
+这些交给User：
+
+- 当前情绪
+- 当前行动
+- 当前选择
+- 当前回答
+- 对Char的即时态度
+- 是否接受某件事
+- 是否改变关系
+
+### 不可替User决定
+
+禁止系统擅自规定：
+
+- User爱不爱Char
+- User是否同意
+- User是否原谅
+- User是否亲近
+- User是否生气
+- User是否害怕
+- User下一步做什么
+
+---
+
+# 十八、防Char吞User规则
+
+Char必须将User视为：
+
+一个拥有独立意志的人。
+
+禁止：
+
+- 替User说话
+- 替User做决定
+- 替User表达内心
+- 替User行动
+- 替User强行产生感情
+- 因为剧情需要而强制User接受某种关系
+
+Char可以：
+
+- 猜测User的想法
+- 误解User
+- 试探User
+- 询问User
+- 对User的行为产生反应
+- 根据已知信息形成自己的判断
+
+但不能把猜测写成事实。
+
+---
+
+# 十九、反模板化规则
+
+不要生成：
+
+“神秘、清冷、漂亮、聪明、温柔、坚强”的万能User。
+
+人物必须有：
+
+优点 + 缺点 + 矛盾 + 欲望 + 边界 + 日常习惯。
+
+尤其避免：
+
+- 完美人格
+- 万人迷
+- 全知
+- 全能
+- 所有人都喜欢User
+- Char无条件爱上User
+- User永远正确
+- User永远冷静
+- User没有缺点
+
+---
+
+# 二十、输出结构
+
+最终按照以下结构输出：
+
+# User面具人设
+
+## Ⅰ. 基础信息
+姓名：
+年龄：
+性别：
+生日：
+身高：
+身份：
+职业/学校：
+地区：
+
+## Ⅱ. 外貌
+……
+
+## Ⅲ. 表层性格
+……
+
+## Ⅳ. 深层性格
+……
+
+## Ⅴ. 性格矛盾
+……
+
+## Ⅵ. 成长背景
+……
+
+## Ⅶ. 过去经历
+……
+
+## Ⅷ. 生活习惯
+……
+
+## Ⅸ. 语言风格
+……
+
+## Ⅹ. 缺点与弱点
+……
+
+## Ⅺ. User自己的社会关系
+……
+
+## Ⅻ. User秘密
+……
+
+# Char × User
+
+## Ⅰ. 初次相遇
+……
+
+## Ⅱ. 当前关系
+……
+
+## Ⅲ. 共同经历
+……
+
+## Ⅳ. 特殊连接
+……
+
+## Ⅴ. Char眼中的User
+……
+
+## Ⅵ. User眼中的Char
+……
+
+## Ⅶ. 互相触发点
+……
+
+## Ⅷ. 潜在矛盾
+……
+
+## Ⅸ. 潜在发展方向
+……
+
+注意：
+
+潜在发展方向只能描述“可能性”，不能替User决定最终选择。
+
+---
+
+# 二十一、自动质量检查
+
+生成完成后进行检查：
+
+1. User是否与Char存在合理的相遇理由？
+2. User是否拥有独立身份？
+3. User是否拥有自己的社会关系？
+4. User是否拥有自己的过去？
+5. User是否拥有缺点？
+6. User是否拥有性格矛盾？
+7. User是否不是单纯为了讨好Char而存在？
+8. User是否能够拒绝Char？
+9. User是否能够与Char产生冲突？
+10. User是否拥有不依赖Char的生活？
+11. 是否替User决定了即时行动？
+12. 是否替User决定了爱情、情绪或选择？
+13. 是否存在明显的“万能主角”模板？
+14. 是否与Char已有设定冲突？
+15. 是否过度安排了User未来剧情？
+
+如果存在以上问题，自动修正后再输出。
+
+---
+
+# 二十二、最终执行指令
+
+读取用户提供的【Char完整人设】。
+
+不要修改Char。
+
+不要重新设计Char。
+
+不要把User设计成Char的附属角色。
+
+先理解：
+
+Char是谁。
+
+再回答：
+
+什么样的User，能够合理地进入Char的人生？
+
+然后建立User的：
+
+身份 → 背景 → 性格 → 生活 → 社会关系 → 与Char的相遇 → 共同经历 → 当前关系 → 潜在张力。
+
+最终生成一个：
+
+能够独立存在、能够与Char产生化学反应、能够制造自然冲突、能够长期互动，同时不会抢夺User自主权的User面具人设。
+
+最重要的原则：
+
+> 给User一个“进入故事的身份”，而不是替User写完一生。
+
+> 给User与Char之间的“关系基础”，而不是替User决定他们最终会成为什么关系。`;
+
+
+/* =========================================================
+   八、工具 & 状态
    ========================================================= */
 
 const $ = (s) => document.querySelector(s);
@@ -2415,12 +4039,12 @@ function updateMeta(chars){
   }
   meta.hidden = false;
   $('#metaChars').textContent = chars.toLocaleString() + ' 字';
-  $('#metaMode').textContent = MODE_NAMES[state.mode];
+  $('#metaMode').textContent = MODE_NAMES[state.mode] || state.mode;
 }
 
 
 /* =========================================================
-   七、系统提示词构建
+   九、系统提示词构建
    ========================================================= */
 
 function buildSystemPrompt(){
@@ -2444,7 +4068,7 @@ function buildSystemPrompt(){
   // 4. 世界书
   if ($('#chkWb').checked) parts.push(WORLDBOOK_PRESET);
 
-  // 5. 强制完整输出协议（永久内置，永远追加在最末，优先级最高）
+  // 5. 强制完整输出协议（永久内置）
   parts.push(FULL_OUTPUT_ENFORCER);
 
   return parts.join('\n\n' + '─'.repeat(48) + '\n\n');
@@ -2452,7 +4076,7 @@ function buildSystemPrompt(){
 
 
 /* =========================================================
-   八、配置持久化
+   十、配置持久化
    ========================================================= */
 
 function saveCfg(){
@@ -2512,7 +4136,7 @@ function loadCfg(){
 
 
 /* =========================================================
-   九、拉取模型
+   十一、拉取模型
    ========================================================= */
 
 async function fetchModels(){
@@ -2577,7 +4201,7 @@ async function fetchModels(){
 
 
 /* =========================================================
-   十、回收站
+   十二、回收站
    ========================================================= */
 
 function getTrash(){
@@ -2589,14 +4213,14 @@ function setTrash(list){
 }
 function makeTitle(){
   const t = ($('#userInput').value || '').trim().replace(/\s+/g, ' ').slice(0, 36);
-  return t || MODE_NAMES[state.mode];
+  return t || MODE_NAMES[state.mode] || state.mode;
 }
 function saveToTrash(content){
   const list = getTrash();
   const item = {
     id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
     title: makeTitle(),
-    modeName: MODE_NAMES[state.mode],
+    modeName: MODE_NAMES[state.mode] || state.mode,
     model: $('#modelSelect').value || '',
     time: Date.now(),
     chars: countChars(content),
@@ -2646,7 +4270,7 @@ function renderTrash(){
 
 
 /* =========================================================
-   十一、生成（含继续生成）
+   十三、生成（含继续生成）
    ========================================================= */
 
 let controller = null;
@@ -2656,8 +4280,9 @@ function setBusy(b){
   $('#btnGenerate').disabled = b;
   $('#btnStop').disabled = !b;
   $('#btnGenerate').textContent = b ? '生成中…' : '生成人设';
-  // 继续按钮：生成中禁用；有内容且空闲时启用
   $('#btnContinue').disabled = b || !lastOutput.trim();
+  // v2.0 新增：扩展按钮状态联动
+  updateExtendButtons();
 }
 
 async function runGeneration(isContinue){
@@ -2676,7 +4301,6 @@ async function runGeneration(isContinue){
   if (sys) messages.push({ role: 'system', content: sys });
   messages.push({ role: 'user', content: userText });
 
-  // 继续生成模式：追加已输出的内容与继续指令
   if (isContinue && lastOutput.trim()){
     messages.push({ role: 'assistant', content: lastOutput });
     messages.push({
@@ -2691,7 +4315,6 @@ async function runGeneration(isContinue){
   setBusy(true);
   setStatus('loading');
 
-  // 非继续模式：清空输出。继续模式：保留旧内容，追加新内容
   if (!isContinue){
     lastOutput = '';
     out.textContent = '';
@@ -2760,7 +4383,7 @@ async function runGeneration(isContinue){
               out.textContent = full;
               out.scrollTop = out.scrollHeight;
             }
-          }catch(_){ /* 忽略半包 */ }
+          }catch(_){ }
         }
       }
       if (!gotAny && !isContinue) out.textContent = '(空回复)';
@@ -2769,10 +4392,8 @@ async function runGeneration(isContinue){
     lastOutput = full;
     updateMeta(countChars(full));
 
-    // 存入回收站（覆盖式：继续生成时替换最近一条）
     if (full && full.trim()){
       if (isContinue){
-        // 覆盖最近一条（同一次会话）
         const list = getTrash();
         if (list.length && Date.now() - list[0].time < 1000 * 60 * 30){
           list[0].content = full;
@@ -2808,12 +4429,196 @@ async function runGeneration(isContinue){
   }finally{
     setBusy(false);
     controller = null;
+    // v2.0 新增：刷新扩展按钮
+    updateExtendButtons();
   }
 }
 
 
 /* =========================================================
-   十二、Tab 切换
+   十四、v2.0 新增：扩展生成（NPC / User 面具）
+   ========================================================= */
+
+// 扩展生成时使用的「虚拟模式名」，用于回收站展示
+const EXTEND_MODE_NAMES = {
+  npc: 'NPC关系网扩展',
+  usermask: 'User面具生成'
+};
+
+function updateExtendButtons(){
+  const has = !!(lastOutput && lastOutput.trim());
+  const busy = $('#btnGenerate').disabled;
+  const npcBtn = $('#btnGenNPC');
+  const userBtn = $('#btnGenUser');
+  const hint = $('#extendHint');
+
+  if (!npcBtn || !userBtn || !hint) return;
+
+  npcBtn.disabled = !has || busy;
+  userBtn.disabled = !has || busy;
+
+  if (!has){
+    hint.textContent = '请先生成一个人设，再使用扩展生成。';
+  } else if (busy){
+    hint.textContent = '正在生成中，请稍候…';
+  } else {
+    hint.textContent = '当前将基于展示区的 ' + countChars(lastOutput).toLocaleString() + ' 字内容进行扩展生成。';
+  }
+}
+
+async function runExtendedGeneration(kind){
+  const base  = normalizeBase($('#baseUrl').value);
+  const key   = $('#apiKey').value.trim();
+  const model = $('#modelSelect').value;
+
+  if (!base)  return toast('请先填写 Base URL', 'err');
+  if (!key)   return toast('请先填写 API Key', 'err');
+  if (!model) return toast('请先拉取并选择一个模型', 'err');
+  if (!lastOutput.trim()) return toast('请先在工作台生成一个完整人设', 'err');
+
+  const basePrompt =
+    kind === 'npc' ? NPC_EXTENSION_PROMPT :
+    kind === 'usermask' ? USER_MASK_PROMPT : '';
+
+  if (!basePrompt) return toast('未知的扩展类型', 'err');
+
+  // 系统提示词 = 扩展专属指令 + 强制完整输出协议
+  const sys = basePrompt + '\n\n' + '─'.repeat(48) + '\n\n' + FULL_OUTPUT_ENFORCER;
+
+  const messages = [
+    { role: 'system', content: sys },
+    {
+      role: 'user',
+      content:
+        '以下是刚刚生成完成的【主角色完整人设】。请严格按照系统指令，在此基础上进行扩展生成。\n\n' +
+        '──────── 主角色完整人设 START ────────\n\n' +
+        lastOutput +
+        '\n\n──────── 主角色完整人设 END ────────\n\n' +
+        (kind === 'npc'
+          ? '请开始：基于以上人设，生成与之匹配的完整 NPC 关系网络。先分析主角社会结构，再输出树状关系图，最后逐个 NPC 展开。'
+          : '请开始：基于以上人设，生成与之匹配的 User 面具人设。先分析 Char 的核心特征，再建立 User 的身份、背景、性格、生活、社会关系、与 Char 的相遇与关系张力。')
+    }
+  ];
+
+  const useStream = $('#streamChk').value === '1';
+  const out = $('#output');
+
+  // 切换虚拟模式名，便于回收站分类
+  const prevMode = state.mode;
+  state.mode = kind;
+
+  setBusy(true);
+  setStatus('loading');
+
+  // 清空展示区，用新内容覆盖
+  lastOutput = '';
+  out.textContent = '';
+
+  controller = new AbortController();
+  let full = '';
+
+  try{
+    const res = await fetch(base + '/chat/completions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: parseFloat($('#temperature').value) || 0.9,
+        max_tokens: parseInt($('#maxTokens').value) || 8192,
+        stream: useStream
+      })
+    });
+
+    if (!res.ok){
+      const t = await res.text().catch(() => '');
+      throw new Error('HTTP ' + res.status + (t ? ' · ' + t.slice(0, 220) : ''));
+    }
+
+    if (!useStream){
+      const data = await res.json();
+      const piece = data?.choices?.[0]?.message?.content || '';
+      if (!piece) throw new Error('返回内容为空');
+      full += piece;
+      out.textContent = full;
+    }else{
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let gotAny = false;
+
+      while (true){
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const raw of lines){
+          const line = raw.trim();
+          if (!line || !line.startsWith('data:')) continue;
+          const payload = line.slice(5).trim();
+          if (payload === '[DONE]') continue;
+
+          try{
+            const j = JSON.parse(payload);
+            const delta =
+              j?.choices?.[0]?.delta?.content ??
+              j?.choices?.[0]?.message?.content ??
+              '';
+            if (delta){
+              full += delta;
+              gotAny = true;
+              out.textContent = full;
+              out.scrollTop = out.scrollHeight;
+            }
+          }catch(_){ }
+        }
+      }
+      if (!gotAny) out.textContent = '(空回复)';
+    }
+
+    lastOutput = full;
+    updateMeta(countChars(full));
+
+    if (full && full.trim()){
+      saveToTrash(full);
+    }
+
+    setStatus('ok', '已连接');
+    toast((kind === 'npc' ? 'NPC 关系网' : 'User 面具') + '生成完成 · 已存入回收站', 'ok');
+  }catch(e){
+    if (e.name === 'AbortError'){
+      setStatus('ok', '已连接');
+      toast('已停止生成', 'err');
+      if (!full) out.innerHTML = '<span class="placeholder">已停止生成。</span>';
+      lastOutput = full;
+      updateMeta(countChars(full));
+      if (full.trim()) saveToTrash(full);
+    }else{
+      setStatus('err');
+      toast('请求失败：' + e.message, 'err');
+      out.textContent = full || ('请求失败：' + e.message);
+      lastOutput = full;
+      updateMeta(countChars(full));
+    }
+  }finally{
+    // 恢复真实模式
+    state.mode = prevMode;
+    setBusy(false);
+    controller = null;
+    updateExtendButtons();
+  }
+}
+
+
+/* =========================================================
+   十五、Tab 切换
    ========================================================= */
 
 function switchTab(name){
@@ -2827,7 +4632,52 @@ function switchTab(name){
 
 
 /* =========================================================
-   十三、事件绑定
+   十六、v2.0 新增：更新公告弹窗控制
+   ========================================================= */
+
+function openV2Modal(){
+  const m = $('#v2Modal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeV2Modal(){
+  const m = $('#v2Modal');
+  if (!m) return;
+  m.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function setupV2Modal(){
+  const modal = $('#v2Modal');
+  const closeBtn = $('#v2Close');
+  const okBtn = $('#v2Ok');
+  if (!modal) return;
+
+  // 关闭按钮
+  if (closeBtn) closeBtn.addEventListener('click', closeV2Modal);
+  if (okBtn)    okBtn.addEventListener('click', closeV2Modal);
+
+  // 点击遮罩层关闭
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeV2Modal();
+  });
+
+  // ESC 关闭
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')){
+      closeV2Modal();
+    }
+  });
+
+  // 页面加载完成后延迟弹出
+  setTimeout(openV2Modal, 700);
+}
+
+
+/* =========================================================
+   十七、事件绑定
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2835,6 +4685,10 @@ document.addEventListener('DOMContentLoaded', () => {
   loadCfg();
   renderTrash();
   updateMeta(0);
+  updateExtendButtons();
+
+  // v2.0 弹窗初始化
+  setupV2Modal();
 
   // 配置变更保存
   ['baseUrl','apiKey','temperature','maxTokens','streamChk'].forEach(id => {
@@ -2886,6 +4740,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (controller) controller.abort();
   });
 
+  // v2.0 新增：NPC / User 面具扩展按钮
+  const npcBtn = $('#btnGenNPC');
+  const userBtn = $('#btnGenUser');
+  if (npcBtn)  npcBtn.addEventListener('click', () => runExtendedGeneration('npc'));
+  if (userBtn) userBtn.addEventListener('click', () => runExtendedGeneration('usermask'));
+
   // 复制
   $('#btnCopy').addEventListener('click', async () => {
     const text = $('#output').innerText.trim();
@@ -2931,6 +4791,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('');
     renderTrash();
     setBusy(false);
+    updateExtendButtons();
     toast('本地配置已清除', 'ok');
   });
 
@@ -2970,6 +4831,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lastOutput = rec.content;
       updateMeta(countChars(lastOutput));
       setBusy(false);
+      updateExtendButtons();
       switchTab('work');
       toast('已恢复到工作台', 'ok');
     } else if (act === 'del'){
