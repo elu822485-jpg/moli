@@ -481,6 +481,54 @@
     align-items:center;flex-wrap:wrap;
   }
   .modal-foot-right{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* =========================================================
+     新增：粘贴已有人设区
+     ========================================================= */
+  .paste-details{
+    margin-bottom:18px;
+    padding:14px 18px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#fbfbfc;
+  }
+  .paste-details summary{
+    cursor:pointer;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.12em;
+    color:var(--ink-2);
+    list-style:none;
+    display:flex;align-items:center;gap:8px;
+    text-transform:uppercase;
+    outline:none;
+  }
+  .paste-details summary::-webkit-details-marker{display:none;}
+  .paste-details summary::before{
+    content:"+";
+    font-size:13px;font-weight:700;color:var(--ink-3);
+    transition:transform .18s ease;
+    display:inline-block;
+  }
+  .paste-details[open] summary::before{transform:rotate(45deg);}
+  .paste-details[open] summary{color:var(--ink);}
+  .paste-details textarea{
+    margin-top:12px;
+    min-height:160px;
+    font-size:12.5px;
+    line-height:1.8;
+    background:#fff;
+    resize:vertical;
+  }
+  .paste-details .paste-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-top:10px;flex-wrap:wrap;
+  }
+  .paste-details .paste-foot .paste-info{
+    font-size:11px;color:var(--ink-3);letter-spacing:.02em;
+  }
+  .paste-details .paste-foot .paste-info.active{color:var(--ink);font-weight:600;}
+  .paste-details .paste-foot .paste-btns{display:flex;gap:8px;flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -671,8 +719,21 @@
     <section class="card" id="extendCard">
       <div class="card-head">
         <h2>扩展生成</h2>
-        <span class="hint">读取上方刚刚生成的人设，在此基础上扩展</span>
+        <span class="hint">读取上方人设，在此基础上扩展</span>
       </div>
+
+      <!-- 新增：粘贴自己已有人设 -->
+      <details class="paste-details" id="pasteDetails">
+        <summary>或填入你自己已有的人设</summary>
+        <textarea id="pastedProfile" class="ta"
+          placeholder="把你自己已经写好的完整人设粘贴到这里。填入后，下方四个扩展生成按钮将基于此内容工作，不依赖上方工作台的生成结果。"></textarea>
+        <div class="paste-foot">
+          <span class="paste-info" id="pasteInfo">粘贴内容将优先作为扩展生成的来源。</span>
+          <div class="paste-btns">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnClearPasted">清空粘贴内容</button>
+          </div>
+        </div>
+      </details>
 
       <div class="extend-row">
         <button class="extend-btn" id="btnGenNPC" disabled>
@@ -712,7 +773,7 @@
         </button>
       </div>
 
-      <p class="extend-hint" id="extendHint">请先生成一个人设，再使用扩展生成。</p>
+      <p class="extend-hint" id="extendHint">请先生成一个人设，或在上方填入你已有的人设。</p>
     </section>
 
   </div>
@@ -5392,13 +5453,17 @@ const LS = {
   input:'moli.input',
   source:'moli.source', mode:'moli.mode', custom:'moli.custom',
   trash:'moli.trash',
-  noticeDismissed:'moli.notice.dismissed'
+  noticeDismissed:'moli.notice.dismissed',
+  pasted:'moli.pasted'
 };
 
 const state = {
   source: 'builtin',
   mode: 'full'
 };
+
+/* 新增：用户粘贴的已有人设内容 */
+let externalProfile = '';
 
 function toast(msg, type='ok'){
   const el = document.createElement('div');
@@ -5460,7 +5525,6 @@ function updateMeta(chars){
 function buildSystemPrompt(){
   const parts = [];
 
-  // 1. 基础指令源
   if (state.source === 'builtin'){
     parts.push(MOLI_PROMPT);
   } else if (state.source === 'custom'){
@@ -5468,11 +5532,9 @@ function buildSystemPrompt(){
     if (c) parts.push(c);
   }
 
-  // 2. 生成模式附加聚焦指令
   const extra = MODE_EXTRA[state.mode];
   if (extra) parts.push(extra);
 
-  // 3. 强制完整输出协议（永久内置）
   parts.push(FULL_OUTPUT_ENFORCER);
 
   return parts.join('\n\n' + '─'.repeat(48) + '\n\n');
@@ -5865,7 +5927,9 @@ const EXTEND_CONFIG = {
 };
 
 function updateExtendButtons(){
-  const has = !!(lastOutput && lastOutput.trim());
+  const generated = !!(lastOutput && lastOutput.trim());
+  const pasted = !!(externalProfile && externalProfile.trim());
+  const has = generated || pasted;
   const busy = $('#btnGenerate').disabled;
   const btns = [
     $('#btnGenNPC'),
@@ -5877,13 +5941,27 @@ function updateExtendButtons(){
 
   btns.forEach(b => b.disabled = !has || busy);
 
+  // 粘贴区提示
+  const pinfo = $('#pasteInfo');
+  if (pinfo){
+    if (pasted){
+      pinfo.textContent = '已启用 · 粘贴内容将作为扩展生成的来源（' + countChars(externalProfile).toLocaleString() + ' 字）。';
+      pinfo.classList.add('active');
+    }else{
+      pinfo.textContent = '粘贴内容将优先作为扩展生成的来源。';
+      pinfo.classList.remove('active');
+    }
+  }
+
   if (!hint) return;
   if (!has){
-    hint.textContent = '请先生成一个人设，再使用扩展生成。';
+    hint.textContent = '请先生成一个人设，或在上方填入你已有的人设。';
   } else if (busy){
     hint.textContent = '正在生成中，请稍候…';
+  } else if (pasted){
+    hint.textContent = '当前来源：粘贴内容（' + countChars(externalProfile).toLocaleString() + ' 字）。';
   } else {
-    hint.textContent = '当前将基于展示区的 ' + countChars(lastOutput).toLocaleString() + ' 字内容进行扩展生成。';
+    hint.textContent = '当前来源：工作台生成结果（' + countChars(lastOutput).toLocaleString() + ' 字）。';
   }
 }
 
@@ -5898,9 +5976,15 @@ async function runExtendedGeneration(kind){
   if (!base)  return toast('请先填写 Base URL', 'err');
   if (!key)   return toast('请先填写 API Key', 'err');
   if (!model) return toast('请先拉取并选择一个模型', 'err');
-  if (!lastOutput.trim()) return toast('请先在工作台生成一个完整人设', 'err');
 
-  // 系统提示词 = 扩展专属指令 + 强制完整输出协议
+  const profileText = (externalProfile && externalProfile.trim())
+    ? externalProfile
+    : lastOutput;
+
+  if (!profileText || !profileText.trim()){
+    return toast('请先在工作台生成人设，或在粘贴区填入已有人设', 'err');
+  }
+
   const sys = cfg.prompt + '\n\n' + '─'.repeat(48) + '\n\n' + FULL_OUTPUT_ENFORCER;
 
   const messages = [
@@ -5908,9 +5992,9 @@ async function runExtendedGeneration(kind){
     {
       role: 'user',
       content:
-        '以下是刚刚生成完成的【主角色完整人设】。请严格按照系统指令，在此基础上进行扩展生成。\n\n' +
+        '以下是【主角色完整人设】。请严格按照系统指令，在此基础上进行扩展生成。\n\n' +
         '──────── 主角色完整人设 START ────────\n\n' +
-        lastOutput +
+        profileText +
         '\n\n──────── 主角色完整人设 END ────────\n\n' +
         cfg.intro
     }
@@ -5919,14 +6003,12 @@ async function runExtendedGeneration(kind){
   const useStream = $('#streamChk').value === '1';
   const out = $('#output');
 
-  // 切换虚拟模式名，便于回收站分类
   const prevMode = state.mode;
   state.mode = kind;
 
   setBusy(true);
   setStatus('loading');
 
-  // 清空展示区，用新内容覆盖
   lastOutput = '';
   out.textContent = '';
 
@@ -6053,7 +6135,6 @@ function switchTab(name){
 function openNoticeModal(){
   const m = $('#v2Modal');
   if (!m) return;
-  // 用户曾经点击过「不再提示」则跳过
   if (localStorage.getItem(LS.noticeDismissed) === '1') return;
   m.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -6093,7 +6174,6 @@ function setupNoticeModal(){
     }
   });
 
-  // 页面加载完成后延迟弹出（未设置不再提示时）
   setTimeout(openNoticeModal, 700);
 }
 
@@ -6107,9 +6187,24 @@ document.addEventListener('DOMContentLoaded', () => {
   loadCfg();
   renderTrash();
   updateMeta(0);
+
+  // 新增：加载已保存的粘贴内容
+  (function loadPasted(){
+    const saved = localStorage.getItem(LS.pasted) || '';
+    const ta = $('#pastedProfile');
+    if (ta){
+      ta.value = saved;
+      externalProfile = saved;
+      if (saved && saved.trim()){
+        // 若粘贴区有内容，展开 details
+        const pd = $('#pasteDetails');
+        if (pd) pd.open = true;
+      }
+    }
+  })();
+
   updateExtendButtons();
 
-  // 更新公告弹窗初始化
   setupNoticeModal();
 
   // 配置变更保存
@@ -6119,6 +6214,30 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#modelSelect').addEventListener('change', saveCfg);
   $('#userInput').addEventListener('input', saveCfg);
   $('#customPreset').addEventListener('input', saveCfg);
+
+  // 新增：粘贴区输入监听
+  const pastedTa = $('#pastedProfile');
+  if (pastedTa){
+    pastedTa.addEventListener('input', () => {
+      externalProfile = pastedTa.value;
+      localStorage.setItem(LS.pasted, externalProfile);
+      updateExtendButtons();
+    });
+  }
+
+  // 新增：清空粘贴内容
+  const btnClearPasted = $('#btnClearPasted');
+  if (btnClearPasted){
+    btnClearPasted.addEventListener('click', () => {
+      if (!externalProfile.trim()) return toast('粘贴区已经是空的', 'err');
+      if (!confirm('确定清空粘贴内容？此操作不可恢复。')) return;
+      externalProfile = '';
+      if (pastedTa) pastedTa.value = '';
+      localStorage.removeItem(LS.pasted);
+      updateExtendButtons();
+      toast('已清空粘贴内容', 'ok');
+    });
+  }
 
   // Tab
   document.querySelectorAll('.tab').forEach(t => {
@@ -6196,12 +6315,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 清除配置
   $('#btnClearCfg').addEventListener('click', () => {
-    if (!confirm('将清除 API 配置、预设、输入、回收站与公告状态，是否继续？')) return;
+    if (!confirm('将清除 API 配置、预设、输入、回收站、粘贴内容与公告状态，是否继续？')) return;
     Object.values(LS).forEach(k => localStorage.removeItem(k));
     $('#apiKey').value = '';
     $('#baseUrl').value = 'https://api.openai.com/v1';
     $('#customPreset').value = '';
     $('#userInput').value = '';
+    if (pastedTa) pastedTa.value = '';
+    externalProfile = '';
     $('#modelSelect').innerHTML = '<option value="">— 请先拉取模型 —</option>';
     state.source = 'builtin';
     state.mode = 'full';
